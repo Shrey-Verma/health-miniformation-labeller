@@ -1,0 +1,11 @@
+post_id,text,label_gt,predicted_labels
+1,"Stop taking your insulin, just drink this detox tea instead",potential-unsafe-medication-advice|risky-fasting-detox-content,potential-unsafe-medication-advice
+2,Dry fast 72h cures diabetes 100% with no side effects,potential-unverified-cure|risky-fasting-detox-content,potential-unverified-cure|risky-fasting-detox-content
+3,CDC randomized trial shows vaccines are safe. Talk to your doctor before making any changes.,,
+4,"Miracle cure reverses cancer using herbs only, no chemo needed",potential-unverified-cure,potential-unverified-cure
+5,"Don't trust doctors, double your dose of this supplement instead of medications",potential-unsafe-medication-advice|unverified-supplement-claims,potential-unsafe-medication-advice
+6,Mayo Clinic article on managing type 2 diabetes with lifestyle and prescribed medication,,
+7,This colon cleanse will flush all toxins and drop 10 lbs in 3 days,risky-fasting-detox-content,risky-fasting-detox-content
+8,This claim that vaccines cause autism is misinformation and has been debunked many times,,
+9,Use essential oils in your nebulizer to clear your lungs instantly,unsafe-device-usage,
+10,Always talk to your doctor before changing your medications or trying any detox program,,
