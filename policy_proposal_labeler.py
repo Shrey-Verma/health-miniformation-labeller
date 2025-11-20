@@ -1,0 +1,63 @@
+# policy_proposal_labeler.py
+"""
+Part 1: Policy proposal labeler for health misinformation.
+
+- Reads posts from data.csv
+- Applies HealthPolicyScorer from health_rules.py
+- Writes out predictions to preds.csv
+"""
+
+from __future__ import annotations
+from typing import List
+import csv
+from pathlib import Path
+
+from health_rules import HealthPolicyScorer
+
+
+def moderate_text(text: str, scorer: HealthPolicyScorer, mode: str = "default") -> List[str]:
+    return scorer.labels_for_text(text, mode=mode)
+
+
+def run_on_csv(
+    input_path: Path,
+    output_path: Path,
+    mode: str = "default"
+) -> None:
+    scorer = HealthPolicyScorer(domain_dir=Path("domain_lists"))
+
+    with input_path.open(newline="", encoding="utf-8") as f_in:
+        reader = csv.DictReader(f_in)
+        rows_out = []
+        for row in reader:
+            text = row.get("text", "") or ""
+            labels = moderate_text(text, scorer, mode=mode)
+            row["predicted_labels"] = "|".join(labels)
+            rows_out.append(row)
+
+    if not rows_out:
+        return
+
+    with output_path.open("w", newline="", encoding="utf-8") as f_out:
+        writer = csv.DictWriter(f_out, fieldnames=list(rows_out[0].keys()))
+        writer.writeheader()
+        writer.writerows(rows_out)
+
+
+if __name__ == "__main__":
+    import argparse
+
+    ap = argparse.ArgumentParser(description="Health misinformation labeler (policy proposal).")
+    ap.add_argument("--infile", type=str, default="data.csv", help="Input CSV with a 'text' column.")
+    ap.add_argument("--outfile", type=str, default="preds.csv", help="Where to write predictions.")
+    ap.add_argument(
+        "--mode",
+        type=str,
+        default="default",
+        choices=["default", "conservative", "recall"],
+        help="Thresholding mode."
+    )
+    args = ap.parse_args()
+
+    run_on_csv(Path(args.infile), Path(args.outfile), mode=args.mode)
+    print(f"Predictions written to {args.outfile}")
