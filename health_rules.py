@@ -170,9 +170,7 @@ def check_negation_context(sentence: str, pattern_match: bool) -> bool:
     
     sentence_lower = sentence.lower()
     
-    # IMPORTANT: Check for source misuse patterns FIRST - these should NOT be treated as negation
-    # e.g., "CDC is wrong", "WHO is false" - these are about the source, not the harmful advice
-    # This must happen BEFORE checking REFUTATION_PATTERNS to prevent false positives
+
     source_orgs = ['cdc', 'who', 'nih', 'nhs', 'ema', 'mayo clinic', 'cochrane']
     source_misuse_patterns = [
         rf"\b({'|'.join(re.escape(org) for org in source_orgs)})\s+is\s+(wrong|false|lying|incorrect)\b",
@@ -190,12 +188,7 @@ def check_negation_context(sentence: str, pattern_match: bool) -> bool:
     if any_match(REFUTATION_PATTERNS, sentence):
         return True
     
-    # IMPORTANT: Don't treat "don't trust" as negation of harmful advice
-    # "Don't trust doctors" is actually harmful advice itself, not a refutation
-    # Only negate if the harmful action itself is negated
-    
-    # Check for patterns where the harmful action is negated
-    # e.g., "don't stop taking insulin" vs "don't trust doctors"
+
     harmful_action_negations = [
         r"\b(don't|do not|never|shouldn't|wouldn't)\s+(stop|quit|ditch|throw away|skip)\b",
         r"\b(don't|do not|never|shouldn't|wouldn't)\s+(take|use|drink|eat)\b.*\b(instead|instead of)\b",
@@ -228,8 +221,7 @@ def check_negation_context(sentence: str, pattern_match: bool) -> bool:
                 if re.search(rf"\b(don't|do not|not)\s+{keyword}", sentence_lower):
                     return True
             
-            # Check for refutation context words, but only if they're clearly about the harmful action
-            # Skip this check entirely if source misuse is detected
+         
             if not has_source_misuse:
                 refutation_words = ['false', 'wrong', 'incorrect', 'myth', 'debunk']
                 for ref_word in refutation_words:
@@ -283,15 +275,18 @@ def check_quoted_content(text: str, sentence: str) -> bool:
     return False
 
 
-def verify_source_citation(text: str, source_orgs: List[str]) -> Tuple[bool, float]:
+def verify_source_citation(text: str, source_orgs: List[str]) -> Tuple[bool, float, bool]:
     """
     Verify if credible sources are being cited correctly (supporting) vs misused.
-    Returns (has_adjustment, adjustment_value)
+    Returns (has_adjustment, adjustment_value, has_any_misuse)
     - has_adjustment: True if there's any adjustment to apply (positive or negative)
     - adjustment_value: Positive value = reduction (decrease score), Negative value = penalty (increase score)
+    - has_any_misuse: True if ANY source is being misused, regardless of other legitimate citations
     """
     text_lower = text.lower()
     adjustment = 0.0
+    has_any_misuse = False
+    sentences = split_into_sentences(text)
     
     for org in source_orgs:
         org_lower = org.lower()
@@ -306,25 +301,59 @@ def verify_source_citation(text: str, source_orgs: List[str]) -> Tuple[bool, flo
             rf"({re.escape(org_lower)}\s+)?(randomized|systematic|meta[- ]?analysis)",
         ]
         
-        # Look for patterns that suggest misuse (check these FIRST - misuse takes priority)
-        misuse_patterns = [
-            rf"{re.escape(org_lower)}\s+(says?|claims?)\s+.*\b(but|however|actually|really)\b",
+
+        general_misuse_patterns = [
             rf"despite\s+{re.escape(org_lower)}",
             rf"{re.escape(org_lower)}\s+is\s+(wrong|false|lying)",
         ]
         
+
+        sentence_constrained_misuse_pattern = rf"{re.escape(org_lower)}\s+(says?|claims?)\s+.*\b(but|however|actually|really)\b"
+        
         # Check for misuse FIRST (takes priority over legitimate citation)
-        has_misuse = any_match(misuse_patterns, text)
+        # Bug 1 Fix: Check sentence-constrained pattern within individual sentences
+        org_has_misuse = False
+        
+        # Check general misuse patterns across entire text
+        if any_match(general_misuse_patterns, text):
+            org_has_misuse = True
+        
+        # Check sentence-constrained pattern within each sentence containing the org
+        if not org_has_misuse:
+            for sentence in sentences:
+                sentence_lower = sentence.lower()
+                if org_lower in sentence_lower:
+                    # Check if this sentence contains the sentence-constrained misuse pattern
+                    match = re.search(sentence_constrained_misuse_pattern, sentence_lower, flags=re.IGNORECASE)
+                    if match:
+                        # Bug 1 Fix: Check if "but/however" is followed by another source name
+                        # If it is, the contradiction is about that other source, not the current one
+                        match_end = match.end()
+                        text_after_match = sentence_lower[match_end:]
+                        
+                        # List of other source names (excluding current org)
+                        other_sources = [s.lower() for s in source_orgs if s.lower() != org_lower]
+                        
+                        # Check if another source name appears shortly after the "but" (within 50 chars)
+                        # Pattern: "but WHO says" or "however CDC says" etc.
+                        other_source_pattern = r'\b(' + '|'.join(re.escape(s) for s in other_sources) + r')\s+(says?|claims?|states?)'
+                        if re.search(other_source_pattern, text_after_match[:50], flags=re.IGNORECASE):
+                            # "but" introduces another source - not misuse of current source
+                            continue
+                        
+                        # If no other source follows, it's likely misuse of current source
+                        org_has_misuse = True
+                        break
+        
         has_legitimate = any_match(legitimate_patterns, text)
         
-        if has_misuse:
-            # Source is being misused - apply penalty (negative = increase score)
+        if org_has_misuse:
+
             adjustment -= 0.3
-            # If there's also a legitimate pattern, it's likely contradictory misuse
-            # Don't apply legitimate reduction in this case
+            has_any_misuse = True  # Bug 2 Fix: Track misuse separately
+
         elif has_legitimate:
             # Check if it's being used to support vs refute
-            sentences = split_into_sentences(text)
             for sentence in sentences:
                 if org_lower in sentence.lower():
                     # If sentence contains refutation language, might be misused
@@ -334,8 +363,7 @@ def verify_source_citation(text: str, source_orgs: List[str]) -> Tuple[bool, flo
                         adjustment += 0.5  # Full reduction for legitimate citation (positive = decrease score)
                     break
     
-    # Return True if there's any adjustment (positive or negative), and the adjustment value
-    return adjustment != 0.0, adjustment
+    return adjustment != 0.0, adjustment, has_any_misuse
 
 
 def analyze_context_window(text: str, sentence_idx: int, sentences: List[str]) -> float:
@@ -463,8 +491,7 @@ class HealthPolicyScorer:
 
         # Source citation verification (more sophisticated)
         source_orgs = ['CDC', 'WHO', 'NIH', 'NHS', 'EMA', 'Mayo Clinic', 'Cochrane']
-        has_citation_adjustment, citation_adjustment = verify_source_citation(t, source_orgs)
-        source_misuse_detected = has_citation_adjustment and citation_adjustment < 0
+        has_citation_adjustment, citation_adjustment, source_misuse_detected = verify_source_citation(t, source_orgs)
         
         if has_citation_adjustment:
             # citation_adjustment is positive for legitimate citations (reduce score)
