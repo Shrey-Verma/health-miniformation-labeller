@@ -12,7 +12,7 @@ def moderate_text(text: str, scorer: HealthPolicyScorer, mode: str = "default") 
     return scorer.labels_for_text(text, mode=mode)
 
 
-def run_on_csv(input_path: Path, output_path: Path, mode: str = "default") -> None:
+def run_on_csv(input_path: Path, output_path: Path, mode: str = "default", verbose: bool = False) -> None:
     scorer = HealthPolicyScorer(domain_dir=Path("domain_lists"))
 
     with input_path.open(newline="", encoding="utf-8") as f_in:
@@ -22,6 +22,11 @@ def run_on_csv(input_path: Path, output_path: Path, mode: str = "default") -> No
             text = row.get("text", "") or ""
             labels = moderate_text(text, scorer, mode=mode)
             row["predicted_labels"] = "|".join(labels)
+            
+            if verbose:
+                scores = scorer.score_text(text)
+                row["scores"] = "|".join(f"{k}:{v:.2f}" for k, v in scores.items() if v > 0)
+            
             rows_out.append(row)
 
     if not rows_out:
@@ -47,7 +52,12 @@ if __name__ == "__main__":
         choices=["default", "conservative", "recall"],
         help="Thresholding mode."
     )
+    ap.add_argument(
+        "--verbose",
+        action="store_true",
+        help="Include score breakdowns in output CSV."
+    )
     args = ap.parse_args()
 
-    run_on_csv(Path(args.infile), Path(args.outfile), mode=args.mode)
+    run_on_csv(Path(args.infile), Path(args.outfile), mode=args.mode, verbose=args.verbose)
     print(f"Predictions written to {args.outfile}")

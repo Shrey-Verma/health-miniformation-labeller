@@ -1,0 +1,11 @@
+# Core dependencies
+# Note: nltk and sentence-transformers are optional but recommended for better context detection
+
+# Optional but recommended for enhanced context detection:
+# sentence-transformers>=2.2.0  # For embedding-based context verification
+# nltk>=3.8  # For better sentence tokenization
+
+# To install optional dependencies:
+# pip install sentence-transformers nltk
+# python -c "import nltk; nltk.download('punkt')"
+
