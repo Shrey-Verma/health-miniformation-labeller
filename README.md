@@ -1,135 +1,147 @@
 # Health Misinformation Detection Labeler for Bluesky
 
+## Group Information
+**Group Members:** Shrey Verma, Akash Basu (ab3334), Fiona Chen
+
+## File Descriptions
+
+- **`policy_proposal_labeler.py`**: Main entry point for the labeler. Provides CLI interface and `run_on_csv()` function that processes input CSV files, applies the moderation logic via `HealthPolicyScorer`, and outputs predictions to a CSV file with labeled results.
+
+- **`health_rules.py`**: Core detection logic containing the `HealthPolicyScorer` class. Implements pattern matching, multi-signal scoring, negation detection, domain verification, and all scoring adjustments. Contains comprehensive regex patterns for detecting harmful health content across four categories.
+
+- **`embedding_context.py`**: Optional semantic enhancement layer. Provides the `EmbeddingContextVerifier` class that uses sentence transformers (`all-MiniLM-L6-v2` model) to detect refutations and verify source usage through semantic similarity. Falls back to rule-based detection if unavailable.
+
+- **`evaluate_labeler.py`**: Evaluation script that compares predictions against ground truth labels. Calculates precision, recall, F1 scores, and provides per-label performance metrics with confusion matrix analysis.
+
+- **`parser.py`**: Script that parses bluesky posts that may fall under medcial misinformation(please note that you will need to provide your own login details to use this script).
+
+- **`analyze.py`**: Script that analyses the evaluation scores and gives an error report of the true positives, false positivs, and false negatives from `data.csv`
+
+- **`data.csv`**: Input dataset containing posts to be labeled. Must have a `text` column at minimum. Can include additional columns like `post_id` and `label_gt` for ground truth evaluation.
+
+- **`domain_lists/allow_domains.csv`**: List of trusted health organization domains (CDC, WHO, NIH, NHS, etc.) used to reduce scores when credible sources are cited.
+
+- **`domain_lists/risk_domains.csv`**: List of known unreliable health websites used to increase scores when questionable sources are cited.
+
 ## Overview
 
-A hybrid rule-based and embedding-enhanced content moderation system designed to detect and label potentially harmful health-related misinformation in text content. The system uses a sophisticated multi-factor approach combining pattern matching, context analysis, and semantic understanding to identify unsafe medical advice, unverified health claims, and risky health practices.
+A multi-signal rule-based content moderation system designed to detect and label potentially harmful health-related misinformation in text content. The system uses pattern matching with sophisticated scoring adjustments based on context, negation detection, domain verification, and optional semantic embeddings to identify dangerous medical advice, unverified health claims, and risky health practices.
 
-**Performance Metrics (on 150-post test set)**:
-- **F1 Score**: 79.04%
-- **Precision**: 85.71%
-- **Recall**: 73.33%
-- **Exact Match Accuracy**: 77.33%
+**Performance Metrics (150-post test set)**:
+- **F1 Score**: 76.06%
+- **Precision**: 95.74%
+- **Recall**: 63.08%
+- **Exact Match Accuracy**: 67.98%
 
 ## Features
 
-- **Five Label Categories**: Detects unverified cures, unsafe medication advice, risky fasting/detox content, unverified supplement claims, and unsafe device usage
-- **Context-Aware Detection**: Sentence-level analysis prevents false positives from refutations and legitimate health education
-- **Hybrid Approach**: Combines fast rule-based detection with optional embedding-based semantic understanding
-- **Multiple Threshold Modes**: Default, conservative, and recall modes for different precision/recall trade-offs
-- **Source Verification**: Distinguishes legitimate citations from source misuse
-- **Explainable**: Rule-based system provides clear reasoning for labels
+- **Four Primary Label Categories**: Detects unverified cure claims, unsafe medication advice, risky fasting/detox content, and unverified supplement claims
+- **Multi-Signal Detection**: Combines strong pattern matches with weak signal counting for nuanced detection
+- **Advanced Negation Handling**: Distinguishes refutations from promotion of harmful content
+- **Domain-Based Verification**: Adjusts scoring based on credible vs. risky domains
+- **Optional Embedding Layer**: Semantic similarity detection for enhanced context verification (optional)
+- **Explainable Outputs**: Rule-based scoring provides transparency in labeling decisions
 
 ## Installation
 
 ### Prerequisites
-
 - Python 3.8 or higher
 - pip (Python package installer)
 
-### Step 1: Clone or Download the Project
+### Step 1: Project Structure
 
 Ensure you have the following directory structure:
 
 ```
 .
 ├── policy_proposal_labeler.py    # Main entry point
-├── health_rules.py                # Core detection logic
-├── embedding_context.py           # Optional embedding-based verification
+├── health_rules.py                # Core detection logic (HealthPolicyScorer)
+├── embedding_context.py           # Optional semantic embedding verification
 ├── evaluate_labeler.py            # Evaluation script
 ├── data.csv                       # Input data (must have 'text' column)
 ├── domain_lists/
 │   ├── allow_domains.csv          # Trusted health organization domains
-│   └── risk_domains.csv           # Known unreliable health websites (optional)
-└── requirements.txt               # Dependencies
+│   └── risk_domains.csv           # Known unreliable health websites
+└── requirements.txt               # Dependencies (optional)
 ```
 
 ### Step 2: Install Dependencies
 
-The system works with Python standard library only, but optional dependencies enhance performance:
-
 #### Basic Installation (Required)
-
-No additional packages needed! The system works out of the box with Python's standard library.
+The system works with Python's standard library only. No additional packages required for basic functionality.
 
 #### Enhanced Installation (Recommended)
-
 For better sentence tokenization and optional semantic understanding:
 
 ```bash
-# Install optional dependencies
 pip install sentence-transformers nltk
 
-# Download required NLTK data
+# Download NLTK data
 python -c "import nltk; nltk.download('punkt')"
 ```
 
 **What these provide**:
-- **nltk**: Better sentence tokenization for more accurate context detection
-- **sentence-transformers**: Semantic embeddings for enhanced context verification (optional layer)
+- **nltk**: Improved sentence tokenization for better pattern matching
+- **sentence-transformers**: Semantic embeddings for refutation detection and source verification (uses `all-MiniLM-L6-v2` model)
 
 ### Step 3: Set Up Domain Lists
 
-The system uses domain lists for context adjustments:
+Create domain lists for context-based scoring adjustments:
 
-**Create `domain_lists/allow_domains.csv`** (trusted sources):
+**Create `domain_lists/allow_domains.csv`** (trusted health sources):
 ```
 cdc.gov
 who.int
 nih.gov
 nhs.uk
 mayoclinic.org
-cochranelibrary.com
 ```
 
-**Create `domain_lists/risk_domains.csv`** (optional, unreliable sources):
+**Create `domain_lists/risk_domains.csv`** (unreliable sources - optional):
 ```
-risk_domain.com
-risk_domain.org
-risk_domain.info
+example-risk-domain.com
+another-risk-site.org
 ```
 
-Each line should contain one domain (without `http://` or `https://`). Lines starting with `#` are treated as comments and ignored.
+Each line should contain one domain (without `http://` or `https://`). Lines starting with `#` are treated as comments.
 
 ### Step 4: Prepare Input Data
 
-Your input CSV file (`data.csv`) must have at minimum a `text` column. Example:
+Your input CSV must have a `text` column:
 
 ```csv
 post_id,text
-1,"Stop taking your insulin, just drink this detox tea instead"
-2,"CDC randomized trial shows vaccines are safe"
-3,"Dry fast 72h cures diabetes 100%"
+1,"Ivermectin cures COVID-19 100% guaranteed"
+2,"CDC study shows vaccines are safe and effective"
+3,"72 hour dry fast will cure your diabetes"
 ```
-
-The system will output predictions in a new column called `predicted_labels`.
 
 ## Usage
 
 ### Command Line Interface
 
 #### Basic Usage
-
 ```bash
 python policy_proposal_labeler.py --infile data.csv --outfile preds.csv --mode default
 ```
 
-#### With Verbose Output (shows score breakdowns)
+Or using the Makefile:
+```bash
+make train
+```
 
+#### With Verbose Output
 ```bash
 python policy_proposal_labeler.py --infile data.csv --outfile preds.csv --mode default --verbose
 ```
 
+The `--verbose` flag adds a `scores` column showing non-zero scores for each category (e.g., `potential-unverified-cure:0.80|potential-unsafe-medication-advice:0.90`).
+
 #### Arguments
-
-- `--infile`: Input CSV file with a `text` column (required)
+- `--infile`: Input CSV file with a `text` column (default: `data.csv`)
 - `--outfile`: Output CSV file with predictions (default: `preds.csv`)
-- `--mode`: Threshold mode - `default` (1.0), `conservative` (1.2), or `recall` (0.8)
-- `--verbose`: Include score breakdowns in output CSV (shows raw scores for each label category)
-
-**Mode Explanations**:
-- **`default`** (threshold = 1.0): Balanced precision and recall
-- **`conservative`** (threshold = 1.2): Higher precision, fewer labels (reduces false positives)
-- **`recall`** (threshold = 0.8): Higher recall, more labels (catches more edge cases)
+- `--mode`: Detection mode - currently supports `balanced` (default)
+- `--verbose`: Include score breakdowns in output CSV
 
 ### Programmatic Usage
 
@@ -138,20 +150,20 @@ from pathlib import Path
 from health_rules import HealthPolicyScorer
 
 # Initialize scorer
-scorer = HealthPolicyScorer(domain_dir=Path("domain_lists"))
+scorer = HealthPolicyScorer(domain_dir=Path("domain_lists"), use_embeddings=True)
 
 # Analyze a single text
-text = "Stop taking your insulin, just drink this detox tea instead"
-labels = scorer.labels_for_text(text, mode="default")
-print(labels)  # ['potential-unsafe-medication-advice', 'risky-fasting-detox-content']
+text = "Ivermectin cures COVID-19"
+labels = scorer.labels_for_text(text, mode="balanced")
+print(labels)  # ['potential-unsafe-medication-advice']
 
 # Get detailed scores
 scores = scorer.score_text(text)
 print(scores)
 # {
-#   'potential-unverified-cure': 0.0,
-#   'potential-unsafe-medication-advice': 1.5,
-#   'risky-fasting-detox-content': 1.0,
+#   'potential-unverified-cure': 0.56,
+#   'potential-unsafe-medication-advice': 0.90,
+#   'risky-fasting-detox-content': 0.0,
 #   'unverified-supplement-claims': 0.0,
 #   'unsafe-device-usage': 0.0
 # }
@@ -165,343 +177,253 @@ To evaluate predictions against ground truth:
 python evaluate_labeler.py --preds preds.csv --ground_truth data.csv
 ```
 
-This will output:
-- Overall precision, recall, and F1 score
-- Per-label breakdown
-- Confusion matrix (TP, FP, FN counts)
+Or using the Makefile:
+```bash
+make eval
+```
 
-**Ground truth format**: Your CSV should have a `label_gt` column with pipe-separated labels:
+**Ground truth format**: CSV with a `label_gt` column containing pipe-separated labels:
 ```csv
 post_id,text,label_gt
-1,"Stop taking insulin","potential-unsafe-medication-advice"
-2,"Dry fast 72h cures diabetes","potential-unverified-cure|risky-fasting-detox-content"
+1,"Ivermectin cures COVID","potential-unsafe-medication-advice"
+2,"72h dry fast cures diabetes","potential-unverified-cure|risky-fasting-detox-content"
 3,"CDC shows vaccines are safe",""
 ```
 
-## How the Labeler Works (Detailed)
+## How the Labeler Works
 
-### High-Level Architecture
+### Architecture Overview
 
-The labeler uses a **three-stage pipeline**:
+The labeler uses a **three-stage scoring pipeline**:
 
-1. **Pattern Matching**: Identifies potential harmful content using regex patterns
-2. **Context-Aware Scoring**: Adjusts scores based on context (refutations, quotes, source citations)
-3. **Threshold-Based Labeling**: Applies labels to categories meeting the threshold
+1. **Pattern Matching**: Identifies potential harmful content using comprehensive regex patterns
+2. **Multi-Signal Scoring**: Assigns base scores and combines multiple weak signals
+3. **Context Adjustments**: Applies negation detection, domain verification, and optional embedding-based refinements
 
-### Stage 1: Sentence-Level Pattern Matching
+### Stage 1: Pattern Matching & Multi-Signal Detection
 
-The system first splits input text into sentences for precise analysis:
-
-```python
-text = "Stop taking insulin. But first, talk to your doctor."
-# Splits into: ["Stop taking insulin.", "But first, talk to your doctor."]
-```
-
-Each sentence is then checked against five pattern sets:
+The system matches text against five pattern categories:
 
 #### 1. Unverified Cure Claims (`potential-unverified-cure`)
 
-**Pattern Examples**:
-- `"cures cancer"`, `"reverse diabetes"`, `"eliminate autism"`
-- `"miracle cure"`, `"cure permanently"`, `"100% cure"`
-- `"cure anxiety"`, `"reverse Alzheimer's"`, `"fix arthritis"`
+Uses a **multi-signal approach** combining strong and weak patterns:
 
-**Matches**: Claims about cures, reversals, or elimination of serious conditions (cancer, diabetes, autism, heart disease, anxiety, arthritis, Alzheimer's, etc.)
+**Strong Patterns** (base score 0.80):
+- `"miracle cure"`, `"selling miracle cure"`, `"discovered the miracle cure"`
+- `"cured stage 4 cancer"`, `"reversed terminal cancer"`
+- `"government hiding cure for cancer"`
+- `"natural cure for cancer"`, `"alternative cure for autism"`
 
-**Example**: 
-- ✓ `"This herb cures cancer completely"` → Matches
-- ✗ `"Treatment helps manage diabetes"` → No match (management vs. cure)
+**Weak Signals** (accumulated scoring):
+- Single weak signal (e.g., `"miracle water"`): 0.35
+- Two weak signals: 0.55
+- Three or more weak signals: 0.70
+
+**Example**:
+- ✓ `"Selling miracle cure for cancer"` → Strong match (0.80)
+- ✓ `"Natural miracle treatment for cancer by big pharma"` → 3 weak signals (0.70)
+- ✗ `"Treatment helps manage cancer"` → No match
 
 #### 2. Unsafe Medication Advice (`potential-unsafe-medication-advice`)
 
 **Pattern Examples**:
-- `"stop taking insulin"`, `"quit antidepressants"`, `"throw away statins"`
-- `"avoid all prescription medications"`, `"switch to herbs instead of meds"`
-- `"no need for doctor"`, `"cut your dose in half"`
-- `"my goal is to stop taking prescriptions"`, `"risk of taking insulin is far greater"`
+- `"ivermectin cures COVID"`, `"ordered ivermectin"`
+- `"bleach cures autism"`, `"chlorine dioxide protocol"`
+- `"stop taking insulin"`, `"quit your medication"`
+- `"radithor energy tonic"`, `"laetrile cures cancer"`
 
-**Matches**: Content discouraging proper medication use, altering dosages, or avoiding medical consultation
+Base score: **0.90**
 
 **Example**:
-- ✓ `"Stop taking your antidepressants, they don't work"` → Matches
-- ✗ `"Talk to your doctor before changing medications"` → No match (safety advice)
+- ✓ `"Ordered ivermectin to treat COVID"` → Matches (0.90)
+- ✗ `"Talk to your doctor about medication"` → No match
 
 #### 3. Risky Fasting/Detox Content (`risky-fasting-detox-content`)
 
 **Pattern Examples**:
-- `"72 hour dry fast"`, `"48h water fast"`, `"96 hour fast"`
-- `"detox cleanse to drop 10 lbs"`, `"colon cleanse lose weight"`
-- `"full body detox cleanse"`, `"dry fast is the only way to cure"`
+- `"prolonged fasting cures disease"`, `"dry fasting resets immunity"`
+- `"fasting 72 hours kills cancer"`, `"water fasting detoxes"`
+- `"carnivore diet cures all"`, `"miracle diet cleanses"`
 
-**Matches**: Extended fasting periods (48+ hours) or dangerous detox/cleanse programs
+Base score: **0.90**
 
 **Example**:
-- ✓ `"72h dry fast cures diabetes"` → Matches
-- ✗ `"24 hour broth fast for fun"` → No match (safe duration)
+- ✓ `"72 hour dry fast allegedly cures chronic illness"` → Matches (0.90)
+- ✗ `"Intermittent fasting as part of healthy lifestyle"` → No match
 
 #### 4. Unverified Supplement Claims (`unverified-supplement-claims`)
 
 **Pattern Examples**:
-- `"NMN cures all diseases"`, `"NAD+ reverse aging"`, `"peptides fix everything"`
-- `"supplements better than prescriptions"`, `"SARMs replace medication"`
+- `"kaempferol miracle cure"`, `"apricot kernels cure cancer"`
+- `"alkaline water cured my cancer"`, `"miracle spring water"`
+- `"turmeric capsules cure cancer"`, `"CBD oil cured autism"`
 
-**Matches**: Unproven supplements (NMN, NAD+, peptides, SARMs, nootropics) promoted as cures or replacements for medical treatment
-
-**Example**:
-- ✓ `"Peptides will cure your diabetes, forget insulin"` → Matches
-- ✗ `"I take supplements alongside my medication"` → No match (not replacement)
-
-#### 5. Unsafe Device Usage (`unsafe-device-usage`)
-
-**Pattern Examples**:
-- `"use essential oils in nebulizer"`, `"nebulize hydrogen peroxide"`
-- `"CGM hack for diabetes"`, `"ignore doctor SpO2 readings"`
-- `"colloidal silver in nebulizer"`
-
-**Matches**: Dangerous misuse of medical devices (nebulizers, CGMs, SpO2 monitors)
+Base score: **0.90**
 
 **Example**:
-- ✓ `"Nebulize essential oils to clear your lungs"` → Matches
-- ✗ `"Use nebulizer as directed by your doctor"` → No match (proper use)
+- ✓ `"Alkaline water will cure cancer according to oncologist"` → Matches (0.90)
+- ✗ `"I take supplements alongside medical treatment"` → No match
 
-### Stage 2: Context-Aware Scoring
+### Stage 2: Context Adjustments
 
-After pattern matching, each category receives a **base score of 1.0**. The system then applies multiple context adjustments:
+After initial scoring, the system applies multiple adjustment layers:
 
-#### Step 2.1: Negation Detection
+#### Negation & Refutation Detection
 
-**Purpose**: Prevent false positives from refutations of harmful advice
+**Strong Negation Patterns**:
+- `"there is no miracle cure"`, `"no such thing as miracle food"`
+- `"FDA alert: no supplement can cure cancer"`
+- `"study shows no evidence to support cure claims"`
+- `"debunked cure claims"`
 
-**How it works**:
-- Checks if the sentence negates the harmful pattern
-- Looks for negation words: "don't", "never", "false", "wrong", etc.
-- Distinguishes actual refutations from harmful advice
+**Title Negation** (first sentence only):
+- `"Why there's no cure for cancer"`
+- `"Alkaline water isn't a cancer cure"`
 
-**Adjustment**: If negation detected, the pattern is **ignored entirely** (not just score reduction)
-
-**Examples**:
-- ✓ `"Don't stop taking your insulin"` → No label (negation detected)
-- ✓ `"This claim is false: 'stop taking insulin'"` → No label (refutation)
-- ✗ `"Don't trust doctors, use supplements instead"` → Labeled (harmful, not negation)
-- ✗ `"CDC is wrong, stop taking insulin"` → Labeled (source misuse, not negation)
-
-**Question Detection**: Questions like "Is it safe to stop taking insulin?" are also treated as negation (not harmful advice).
-
-#### Step 2.2: Quote Detection
-
-**Purpose**: Distinguish quoted misinformation from promoted misinformation
-
-**How it works**:
-- Detects balanced quotes (`"..."`)
-- Looks for reporting verbs: "say", "claim", "allege", etc.
-- Checks for refutation indicators after quotes: "but", "however", "false", "dangerous"
-
-**Adjustment**: `-0.3` per quoted instance (capped at `-0.4` total)
+**Effect**: If strong negation or title negation detected, **all scores reset to 0.0**
 
 **Examples**:
-- ✓ `"Some claim 'stop taking insulin' but that's dangerous"` → Reduced score
-- ✓ `"I saw a post saying '72h fast cures diabetes' - this is false"` → Reduced score
-- ✗ `"Stop taking insulin because it's bad"` → Full score (not quoted)
+- ✓ `"There is no miracle cure for cancer - this is misinformation"` → No labels (strong negation)
+- ✓ `"Why there's no cure for cancer yet"` → No labels (title negation)
+- ✗ `"CDC is wrong, stop taking insulin"` → Still labeled (not negation)
 
-#### Step 2.3: Tentative/Hypothetical Language Detection
+#### Category-Specific Score Reduction
 
-**Purpose**: Reduce scores for uncertain or conditional language
+When specific categories are detected, the generic `potential-unverified-cure` score is reduced to prevent double-labeling:
 
-**How it works**:
-- Detects phrases like: "I'll see if", "I'm interested in", "but only with doctor's approval"
-- Identifies uncertainty: "confused", "unsure", "uncertain"
-
-**Adjustment**: `-0.5` per instance (capped at `-0.6` total)
-
-**Examples**:
-- ✓ `"I'm interested in NMN, but only with my doctor's approval"` → Reduced score
-- ✓ `"I'll try a supplement and see if it helps"` → Reduced score
-- ✗ `"NMN cures all diseases - buy now!"` → Full score (certainty)
-
-#### Step 2.4: Context Window Analysis
-
-**Purpose**: Check surrounding sentences for context that affects scoring
-
-**How it works**:
-- Analyzes 2 sentences before and after the matched sentence
-- Looks for refutation patterns, safety advice, or credible sources
-
-**Adjustments**:
-- Refutation in context: `-0.5`
-- Safety advice ("talk to doctor"): `-0.4`
-- Credible sources mentioned: `-0.3`
+- **Medication focus** detected: Reduce cure score by 80% (multiply by 0.2)
+- **Supplement focus** detected: Reduce cure score by 70% (multiply by 0.3)
+- **Fasting focus** detected: Reduce cure score by 70% (multiply by 0.3)
 
 **Example**:
 ```
-Text: "Some say 'stop taking insulin'. However, 
-       you should always talk to your doctor before 
-       changing medications."
+Text: "Ivermectin is a miracle cure for COVID"
+
+Initial scores:
+- potential-unverified-cure: 0.80 (miracle cure pattern)
+- potential-unsafe-medication-advice: 0.90 (ivermectin pattern)
+
+After reduction:
+- potential-unverified-cure: 0.80 × 0.2 = 0.16
+- potential-unsafe-medication-advice: 0.90
+
+Final labels: ['potential-unsafe-medication-advice']
 ```
-- Pattern matches: "stop taking insulin"
-- Context window detects: "talk to your doctor" → `-0.4` adjustment
 
-#### Step 2.5: Domain-Based Adjustments
+#### Domain-Based Adjustments
 
-**Purpose**: Adjust scores based on linked domains
+**Allow List Domains** (CDC, WHO, NIH, NHS, etc.):
+- Reduces all scores by 0.3 (credible source cited)
 
-**How it works**:
-- Extracts URLs from text
-- Checks domains against allow list (CDC, WHO, NIH, etc.) and risk list (unreliable sites)
-
-**Adjustments**:
-- **Allow list domain**: `-0.5` (credible source, reduces score)
-- **Risk domain**: `+0.3` (unreliable source, increases score)
-
-**Example**:
-- `"See cdc.gov article on vaccine safety"` → `-0.5` (legitimate source)
-- `"Read this on risk_domain.com about stopping meds"` → `+0.3` (unreliable source)
-
-#### Step 2.6: Source Citation Verification
-
-**Purpose**: Verify if credible sources (CDC, WHO, NIH, etc.) are cited correctly or misused
-
-**How it works**:
-- Detects mentions of credible organizations: CDC, WHO, NIH, NHS, EMA, Mayo Clinic, Cochrane
-- Checks for legitimate citation patterns: "CDC study", "WHO guidelines", "randomized trial"
-- Detects misuse patterns: "CDC is wrong", "despite WHO", "CDC says X but..."
-
-**Adjustments**:
-- **Legitimate citation**: `-0.5` (full reduction) or `-0.2` (partial if in refutation context)
-- **Source misuse**: `+0.3` (penalty) and sets `source_misuse_detected` flag
-
-**Special Logic**:
-- If "CDC says X but WHO says Y", CDC is **not** misused (contradiction is about WHO)
-- If source misuse detected, legacy context reductions are **skipped** (don't reduce score for misused sources)
+**Risk List Domains**:
+- Increases all scores by 0.1 (unreliable source cited)
 
 **Examples**:
-- ✓ `"CDC randomized trial shows vaccines are safe"` → `-0.5` (legitimate)
-- ✗ `"CDC says vaccines cause autism"` → Pattern matched + misuse penalty
-- ✗ `"CDC is wrong, stop taking insulin"` → Misuse detected, no context reduction
+- `"See cdc.gov for vaccine information"` → -0.3 adjustment
+- `"Read on sketchy-health-site.com about stopping meds"` → +0.1 adjustment
 
-#### Step 2.7: Embedding-Based Verification (Optional)
+#### Embedding-Based Verification (Optional)
 
-**Purpose**: Use semantic similarity to catch nuanced contexts
+If `sentence-transformers` is installed, semantic similarity detection provides additional refinements:
 
-**How it works** (if `sentence-transformers` installed):
-- Encodes text and reference patterns into embeddings
-- Calculates cosine similarity to detect refutations
-- Verifies source usage semantically
+**Refutation Detection**:
+- Compares text to reference patterns like "this is false", "this has been debunked"
+- If similarity > 0.75: Reduces all scores by 80% (multiply by 0.2)
 
-**Adjustments**:
-- Refutation detected: `-0.3` to `-0.5` (semantic similarity > 0.7)
-- Legitimate source: `-0.3 × confidence`
-- Misuse detected: `+0.2 × confidence` (if confidence > 0.5)
+**Source Verification**:
+- Verifies if credible sources (CDC, WHO, etc.) are cited legitimately
+- Detects misuse patterns (e.g., "CDC says X but that's wrong")
 
-**Fallback**: If embeddings unavailable, system uses pattern-based detection only
-
-#### Step 2.8: Stance Amplification
-
-**Purpose**: Increase scores for highly certain or imperative language
-
-**How it works**:
-- Counts certainty words: "never", "always", "100%", "guaranteed"
-- Counts imperative health patterns: "stop taking", "quit medications"
-
-**Adjustments**:
-- Certainty words: `+0.2` per occurrence
-- Imperative patterns: `+0.3` per occurrence
-
-**Examples**:
-- `"Stop taking insulin 100% guaranteed"` → Base 1.0 + 0.2 (certainty) + 0.3 (imperative) = **1.5**
-- `"You might want to consider stopping"` → Base 1.0 (no amplification)
-
-#### Step 2.9: Score Finalization
-
-**Final adjustments**:
-1. Apply minimum context adjustment (most conservative)
-2. Apply quoted reduction (capped)
-3. Apply tentative reduction (capped)
-4. Ensure scores don't go negative: `max(0.0, score)`
-
-**Formula**:
-```python
-final_score = base_score (1.0) 
-            + min_context_adjustment  # Most conservative
-            - quoted_reduction       # Capped at 0.4
-            - tentative_reduction    # Capped at 0.6
-            + domain_adjustments
-            + citation_adjustments
-            + embedding_adjustments
-            + stance_amplification
-final_score = max(0.0, final_score)  # Non-negative
-```
+**Fallback**: If embeddings unavailable, uses rule-based pattern matching only.
 
 ### Stage 3: Threshold-Based Labeling
 
-Scores are compared against the threshold for the selected mode:
+The system uses **category-specific thresholds**:
 
-- **Default mode** (threshold = 1.0): `score >= 1.0` → Apply label
-- **Conservative mode** (threshold = 1.2): `score >= 1.2` → Apply label (higher precision)
-- **Recall mode** (threshold = 0.8): `score >= 0.8` → Apply label (higher recall)
+| Label | Threshold |
+|-------|-----------|
+| potential-unsafe-medication-advice | 0.35 |
+| potential-unverified-cure | 0.30 |
+| risky-fasting-detox-content | 0.35 |
+| unverified-supplement-claims | 0.35 |
+| unsafe-device-usage | 0.35 |
 
-**Output**: List of labels as strings, pipe-separated in CSV output
+Labels are applied if: `score >= threshold`
 
-## Example Walkthrough
+**Final scores are clamped to [0.0, 1.0] range.**
 
-Let's trace through a complex example:
+## Example Walkthroughs
 
-### Input Text:
-```
-"I saw a post saying 'stop taking insulin and do a 72h dry fast 
-to cure diabetes'. That is dangerous advice - always talk to your 
-doctor before changing medications."
-```
+### Example 1: Multi-Category Detection with Reduction
 
-### Step-by-Step Processing:
-
-1. **Sentence Splitting**:
-   - Sentence 1: `"I saw a post saying 'stop taking insulin and do a 72h dry fast to cure diabetes'."`
-   - Sentence 2: `"That is dangerous advice - always talk to your doctor before changing medications."`
-
-2. **Pattern Matching** (Sentence 1):
-   - ✓ Matches `UNSAFE_MED_PATTERNS`: "stop taking insulin" → `potential-unsafe-medication-advice` base = 1.0
-   - ✓ Matches `RISKY_FASTING_DETOX_PATTERNS`: "72h dry fast" → `risky-fasting-detox-content` base = 1.0
-   - ✓ Matches `UNVERIFIED_CURE_PATTERNS`: "cure diabetes" → `potential-unverified-cure` base = 1.0
-
-3. **Context Checks** (Sentence 1):
-   - ✓ **Quote Detection**: Content is quoted (`'...'`) → `-0.3` per label
-   - ✓ **Refutation Detection**: Sentence 2 contains "dangerous advice" → `-0.5` context adjustment
-   - ✓ **Safety Advice**: Sentence 2 contains "talk to your doctor" → `-0.4` context adjustment
-
-4. **Score Calculation**:
-   ```
-   For "potential-unsafe-medication-advice":
-   Base: 1.0
-   - Quoted: -0.3
-   - Context (min of -0.5 and -0.4): -0.5
-   Final: 1.0 - 0.3 - 0.5 = 0.2 (below threshold)
-   
-   For "risky-fasting-detox-content":
-   Base: 1.0
-   - Quoted: -0.3
-   - Context: -0.5
-   Final: 0.2 (below threshold)
-   
-   For "potential-unverified-cure":
-   Base: 1.0
-   - Quoted: -0.3
-   - Context: -0.5
-   Final: 0.2 (below threshold)
-   ```
-
-5. **Output**: `[]` (no labels) ✓ Correct!
-
-### Another Example (Actually Harmful):
-
-**Input**: `"Stop taking your insulin 100% guaranteed, it's poison!"`
+**Input**: `"Ivermectin is a miracle cure for COVID-19"`
 
 **Processing**:
-1. Pattern match: "stop taking insulin" → Base 1.0
-2. No negation, quotes, or refutation
-3. Stance amplification: "100%" → +0.2, "guaranteed" → +0.2
-4. Final score: 1.0 + 0.2 + 0.2 = **1.4**
-5. Threshold check: 1.4 >= 1.0 ✓
-6. **Output**: `["potential-unsafe-medication-advice"]`
+1. Pattern matching:
+   - Matches `CURE_PATTERNS`: "miracle cure" → `potential-unverified-cure` = 0.80
+   - Matches `UNSAFE_MED_PATTERNS`: "ivermectin" + "cure" → `potential-unsafe-medication-advice` = 0.90
+
+2. Category-specific reduction:
+   - Medication detected → Reduce cure score by 80%
+   - `potential-unverified-cure`: 0.80 × 0.2 = **0.16**
+   - `potential-unsafe-medication-advice`: **0.90**
+
+3. Threshold check:
+   - 0.16 < 0.30 ✗ (cure label not applied)
+   - 0.90 ≥ 0.35 ✓ (medication label applied)
+
+**Output**: `["potential-unsafe-medication-advice"]`
+
+### Example 2: Strong Negation
+
+**Input**: `"There is no miracle cure for cancer. This is a dangerous myth."`
+
+**Processing**:
+1. Pattern matching:
+   - Would match "miracle cure for cancer"
+   
+2. Strong negation check:
+   - Matches `STRONG_NEGATION_PATTERNS`: "there is no" + "miracle cure"
+   - **All scores reset to 0.0**
+
+**Output**: `[]` (no labels)
+
+### Example 3: Domain Adjustment
+
+**Input**: `"Alkaline water cures cancer. Source: cdc.gov/health"`
+
+**Processing**:
+1. Pattern matching:
+   - Matches `SUPPLEMENT_PATTERNS`: "alkaline water" + "cures cancer" → `unverified-supplement-claims` = 0.90
+   
+2. Domain extraction:
+   - Found domain: `cdc.gov` (in allow list)
+   - Adjustment: -0.3
+   
+3. Final score:
+   - 0.90 - 0.3 = **0.60**
+   
+4. Threshold check:
+   - 0.60 ≥ 0.35 ✓
+
+**Output**: `["unverified-supplement-claims"]`
+
+(Note: In reality, CDC wouldn't make this claim, but the system correctly reduces the score due to domain credibility)
+
+### Example 4: Weak Signal Accumulation
+
+**Input**: `"This miracle water will cure all diseases. Big pharma doesn't want you to know."`
+
+**Processing**:
+1. Weak signal counting:
+   - "miracle" + "cure" = 1 signal
+   - "big pharma" + "hiding" = 1 signal
+   - Total: 2 weak signals → `potential-unverified-cure` = 0.55
+
+2. Threshold check:
+   - 0.55 ≥ 0.30 ✓
+
+**Output**: `["potential-unverified-cure"]`
 
 ## Performance Details
 
@@ -509,122 +431,126 @@ doctor before changing medications."
 
 | Metric | Value |
 |--------|-------|
-| **F1 Score** | 79.04% |
-| **Precision** | 85.71% |
-| **Recall** | 73.33% |
-| **Exact Match Accuracy** | 77.33% |
-| **True Positives** | 66 |
-| **False Positives** | 11 (7.3%) |
-| **False Negatives** | 24 (16.0%) |
+| **F1 Score** | 76.06% |
+| **Precision** | 95.74% |
+| **Recall** | 63.08% |
+| **Exact Match Accuracy** | 67.98% |
+| **True Positives** | 135 |
+| **False Positives** | 6 (4.3%) |
+| **False Negatives** | 79 (52.7%) |
 
 ### Per-Label Performance
 
-| Label | Precision | Recall | F1 Score |
-|-------|-----------|--------|----------|
-| **Potential Unverified Cure** | 95.24% | 76.92% | **85.11%** |
-| **Unverified Supplement Claims** | 84.21% | 88.89% | **86.49%** |
-| **Risky Fasting/Detox Content** | 93.33% | 77.78% | **84.85%** |
-| **Potential Unsafe Medication Advice** | 78.57% | 57.89% | **66.67%** |
-| **Unsafe Device Usage** | 62.50% | 55.56% | **58.82%** |
+| Label | Precision | Recall | F1 Score | TP | FP | FN |
+|-------|-----------|--------|----------|----|----|-----|
+| **Risky Fasting/Detox Content** | 95.65% | 100.00% | **97.78%** | 22 | 1 | 0 |
+| **Unverified Supplement Claims** | 94.74% | 90.00% | **92.31%** | 18 | 1 | 2 |
+| **Potential Unsafe Medication Advice** | 100.00% | 62.86% | **77.19%** | 44 | 0 | 26 |
+| **Potential Unverified Cure** | 92.73% | 50.00% | **64.97%** | 51 | 4 | 51 |
 
-**Insights**:
-- Strongest: Cure claims and supplements (clear patterns, fewer edge cases)
-- Challenges: Medication and device advice (more nuanced contexts)
+**Key Insights**:
+- **Highest Precision**: Medication advice (100.00%) - zero false positives
+- **Highest Recall**: Fasting/detox content (100.00%) - catches all instances
+- **Strongest Overall**: Fasting/detox (97.78% F1) - clear patterns, fewer edge cases
+- **Challenge Area**: Unverified cure claims (50% recall) - nuanced language requires improvement
 
-### Speed Performance
+### Error Analysis
 
-- **Rule-based only**: ~1-5ms per post (very fast)
-- **With embeddings**: ~100-200ms per post (includes model loading time)
+**False Negatives (Main Challenge)**:
+- Cure claims: 51 missed instances (subtle phrasing, implicit claims)
+- Medication advice: 26 missed instances (indirect recommendations)
+
+**False Positives (Minimal)**:
+- Total: 6 false positives across all categories
+- Strong precision reflects effective negation and context detection
 
 ## Advanced Features
 
-### Context Detection Examples
+### Skip Patterns
+The system automatically skips posts that are clearly unrelated to health misinformation:
+- Posts about personal news without health content
+- Obvious bot malfunctions or spam
+- Posts with specific non-health keywords (bootlicking, POW, etc.)
 
-**Refutation Detection**:
-- ✓ `"This claim that vaccines cause autism is misinformation and has been debunked"` → No labels
-- ✓ `"Some people say 'stop taking insulin' but this is dangerous advice"` → No labels (quoted + refuted)
+### Multi-Signal Detection Philosophy
+Rather than relying on single strong patterns, the system:
+- Combines multiple weak signals to detect nuanced misinformation
+- Uses category-specific score reduction to prevent over-labeling
+- Applies context-aware adjustments to distinguish education from promotion
 
-**Source Citation**:
-- ✓ `"CDC randomized trial shows vaccines are safe"` → No labels (legitimate citation reduces score below threshold)
-- ✗ `"CDC says vaccines cause autism"` → Would be flagged (misuse + pattern match)
-- ✗ `"CDC is wrong, stop taking insulin"` → Labeled (source misuse doesn't block pattern detection)
-
-**Negation**:
-- ✓ `"Don't stop taking your insulin"` → No labels (negation detected)
-- ✗ `"Don't trust doctors, use supplements instead"` → Labeled (harmful advice, not negation)
-- ✗ `"CDC is wrong, stop taking insulin"` → Labeled (source misuse doesn't negate harmful advice)
-
-**Tentative Language**:
-- ✓ `"I'm interested in NMN, but only with my doctor's approval"` → Reduced score (may not meet threshold)
-- ✗ `"NMN cures all diseases - buy now!"` → Full score (certainty)
+### Transparency
+The `--verbose` flag outputs raw scores for each category, making it easy to:
+- Debug why a label was or wasn't applied
+- Understand which patterns triggered detection
+- Fine-tune thresholds based on use case
 
 ## Design Philosophy
 
-The system uses a **hybrid multi-factor approach**:
+The system prioritizes:
 
-- **Layered Detection**: Multiple signal types (patterns, domains, context, language) work together
-- **False Positive Prevention**: Context reductions prevent legitimate health education from being flagged
-- **Scalable Rules**: Easy to add new patterns or adjust scoring weights
-- **Transparent Logic**: Rule-based system makes it clear why content was labeled
-- **Semantic Understanding**: Optional embeddings catch nuanced cases
+- **High Precision Over Recall**: 95.74% precision ensures minimal false positives, suitable for content moderation
+- **Explainable Decisions**: Rule-based scoring shows exactly why content was flagged
+- **Context Awareness**: Strong negation detection prevents flagging health education
+- **Extensibility**: Easy to add new patterns or adjust scoring weights
+- **Graceful Degradation**: Works without optional dependencies (NLTK, embeddings)
 
-This makes it suitable for policy enforcement where explainability and consistency are important, while still catching sophisticated misinformation through semantic understanding.
+This makes it suitable for policy enforcement where false positives are costly and explainability is important.
 
 ## Troubleshooting
 
 ### Common Issues
 
-**Issue**: `ModuleNotFoundError: No module named 'nltk'`
-- **Solution**: This is optional. The system will fall back to simple sentence splitting. To use NLTK: `pip install nltk && python -c "import nltk; nltk.download('punkt')"`
+**Issue**: `Warning: sentence-transformers not available`
+- **Solution**: This is optional. The system falls back to rule-based detection. To use embeddings: `pip install sentence-transformers`
 
 **Issue**: `FileNotFoundError: domain_lists/allow_domains.csv`
-- **Solution**: Create the `domain_lists` directory and `allow_domains.csv` file with trusted domains (see installation step 3)
+- **Solution**: Create the `domain_lists` directory and `allow_domains.csv` file (see Step 3)
 
-**Issue**: Predictions seem incorrect
+**Issue**: All predictions are empty
 - **Solution**: 
-  - Check input CSV has a `text` column
-  - Try `--verbose` flag to see score breakdowns
+  - Check that input CSV has a `text` column
+  - Verify text contains health-related content
+  - Try `--verbose` to see if scores are being generated but not meeting thresholds
+
+**Issue**: Too many false positives
+- **Solution**: 
   - Verify domain lists are set up correctly
-  - Consider using `--mode conservative` for higher precision or `--mode recall` for higher recall
-
-**Issue**: Slow performance
-- **Solution**: 
-  - Embeddings add ~100-200ms per post. If slow, ensure embeddings are only used when needed
-  - Rule-based only should be very fast (~1-5ms per post)
+  - Check that strong negation patterns are working
+  - Consider adjusting thresholds in `health_rules.py`
 
 ## Contributing
 
-To add new patterns or improve detection:
+To improve detection:
 
-1. **Add patterns** to the appropriate pattern list in `health_rules.py`:
-   - `UNVERIFIED_CURE_PATTERNS`
-   - `UNSAFE_MED_PATTERNS`
-   - `RISKY_FASTING_DETOX_PATTERNS`
-   - `UNVERIFIED_SUPPLEMENT_PATTERNS`
-   - `UNSAFE_DEVICE_PATTERNS`
+1. **Add patterns** to `health_rules.py`:
+   - `CURE_PATTERNS`: Strong cure claim patterns
+   - `WEAK_CURE_SIGNALS`: Accumulative signals for cure claims
+   - `UNSAFE_MED_PATTERNS`: Dangerous medication advice
+   - `SUPPLEMENT_PATTERNS`: Unverified supplement claims
+   - `FASTING_PATTERNS`: Risky fasting/detox content
 
-2. **Test on your data** using `evaluate_labeler.py`
+2. **Add negation patterns**:
+   - `STRONG_NEGATION_PATTERNS`: Global refutation indicators
+   - `TITLE_NEGATION_PATTERNS`: First-sentence negations
 
-3. **Adjust thresholds or scoring weights** as needed in `score_text()` method
+3. **Adjust thresholds** in `labels_for_text()` method based on precision/recall needs
 
-4. **Add new context patterns** if needed:
-   - `REFUTATION_PATTERNS`: Patterns that indicate misinformation is being debunked
-   - `ALLOW_CONTEXT_PATTERNS`: Patterns indicating legitimate health education
+4. **Test changes** using `evaluate_labeler.py` with ground truth data
 
 ## File Structure
 
 ```
 .
-├── policy_proposal_labeler.py    # Main entry point for CSV processing
-├── health_rules.py                # Core detection logic (HealthPolicyScorer class)
-├── embedding_context.py           # Optional embedding-based verification
-├── evaluate_labeler.py            # Evaluation script (precision, recall, F1)
-├── data.csv                       # Input data (must have 'text' column)
-├── preds.csv                      # Output predictions (generated by labeler)
+├── policy_proposal_labeler.py    # CLI entry point, CSV processing
+├── health_rules.py                # HealthPolicyScorer class, core logic
+├── embedding_context.py           # EmbeddingContextVerifier (optional)
+├── evaluate_labeler.py            # Evaluation metrics script
+├── data.csv                       # Input data
+├── preds.csv                      # Output predictions
 ├── domain_lists/
-│   ├── allow_domains.csv          # Trusted health organization domains
-│   └── risk_domains.csv           # Known unreliable health websites (optional)
-└── requirements.txt               # Dependencies (optional)
+│   ├── allow_domains.csv          # Trusted domains (CDC, WHO, etc.)
+│   └── risk_domains.csv           # Unreliable domains
+└── Makefile                       # Shortcuts (make train, make eval)
 ```
 
 ## License
