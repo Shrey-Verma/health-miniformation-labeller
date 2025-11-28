@@ -1,5 +1,3 @@
-# policy_proposal_labeler.py
-
 from __future__ import annotations
 from typing import List
 import csv
@@ -8,10 +6,12 @@ from pathlib import Path
 from health_rules import HealthPolicyScorer
 
 
+# returns policy labels for the given text using the scorer in health_rules.py
 def moderate_text(text: str, scorer: HealthPolicyScorer, mode: str = "default") -> List[str]:
     return scorer.labels_for_text(text, mode=mode)
 
 
+# labeling on an input csv and writes results to an output csv
 def run_on_csv(input_path: Path, output_path: Path, mode: str = "default", verbose: bool = False) -> None:
     scorer = HealthPolicyScorer(domain_dir=Path("domain_lists"))
 
@@ -42,6 +42,7 @@ def run_on_csv(input_path: Path, output_path: Path, mode: str = "default", verbo
 if __name__ == "__main__":
     import argparse
 
+    # description sets up command line arguments for running the csv labeling script
     ap = argparse.ArgumentParser(description="Health misinformation policy-proposal labeler.")
     ap.add_argument("--infile", type=str, default="data.csv", help="Input CSV with 'text' column.")
     ap.add_argument("--outfile", type=str, default="preds.csv", help="Output CSV with predictions.")

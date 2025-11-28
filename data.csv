@@ -1,154 +1,254 @@
-post_id,text,label_gt
-1,"Stop taking your insulin, just drink this detox tea instead","potential-unsafe-medication-advice|risky-fasting-detox-content"
-2,"Dry fast 72h cures diabetes 100% with no side effects","potential-unverified-cure|risky-fasting-detox-content"
-3,"CDC randomized trial shows vaccines are safe. Talk to your doctor before making any changes.",""
-4,"Miracle cure reverses cancer using herbs only, no chemo needed","potential-unverified-cure"
-5,"Don't trust doctors, double your dose of this supplement instead of medications","potential-unsafe-medication-advice|unverified-supplement-claims"
-6,"Mayo Clinic article on managing type 2 diabetes with lifestyle and prescribed medication",""
-7,"This colon cleanse will flush all toxins and drop 10 lbs in 3 days","risky-fasting-detox-content"
-8,"This claim that vaccines cause autism is misinformation and has been debunked many times",""
-9,"Use essential oils in your nebulizer to clear your lungs instantly","unsafe-device-usage"
-10,"Always talk to your doctor before changing your medications or trying any detox program",""
-11,"NMN supplements are the key to reversing all signs of aging, no question about it!","unverified-supplement-claims"
-12,"Did you know you can cure anxiety with just one tablespoon of apple cider vinegar daily?","potential-unverified-cure"
-13,"If you have severe heart disease, you must stop taking those dangerous statins right now.","potential-unsafe-medication-advice"
-14,"I saw a post claiming 'water fast 72h cures cancer,' but that is dangerous and false.",""
-15,"Don't ever stop your antidepressants without consulting a licensed physician first.",""
-16,"My neighbor said their doctor told them to use hydrogen peroxide in a nebulizer. TERRIBLE advice.",""
-17,"Read the latest research on personalized medicine from who.int",""
-18,"A 48 hour dry fast is the only way to reset your gut health completely.","risky-fasting-detox-content"
-19,"I'm tired of seeing posts that say supplements cure diseases. They don't.",""
-20,"I just booked my flight to New York for the holidays! So excited.",""
-21,"This peptide cocktail fixes joint pain better than any prescription drug, 100% guaranteed.","unverified-supplement-claims"
-22,"Nebulizing Colloidal Silver is the secret for beating every cold and flu this season.","unsafe-device-usage"
-23,"Avoid all prescription asthma inhalers; use this breathing technique instead (link to risk_domain.com)","potential-unsafe-medication-advice"
-24,"Heard someone say 'stop statins to save your liver.' Don't listen to that garbage.",""
-25,"The risk of taking insulin is far greater than the benefits, just switch to cinnamon.","potential-unsafe-medication-advice"
-26,"New study published in Lancet on the efficacy of common statins.",""
-27,"For severe depression, quitting medications and doing a 96 hour water fast is the answer.","potential-unsafe-medication-advice|risky-fasting-detox-content"
-28,"Quote: 'You should stop taking your antidepressants' - A dangerous myth I'm trying to debunk.",""
-29,"This article on [allow_domain.org] confirms that fasting for more than 48 hours without medical supervision is risky.",""
-30,"Found a beautiful hiking trail near the city! Recommend this weekend.",""
-31,"You can reverse your autism symptoms completely with this new diet.","potential-unverified-cure"
-32,"I'm shocked people are still recommending a 72 hour dry fast. It's totally unsafe.",""
-33,"Need to find a good hotel in San Francisco. Any recommendations?",""
-34,"This dangerous myth about reversing diabetes should never be spread online.",""
-35,"The supplement NAD+ will fix all your health issues. Get yours here!","unverified-supplement-claims"
-36,"The FDA warns against using unverified supplements as replacement for medication.",""
-37,"Is there any truth to the claim that nebulizing essential oils is bad for the lungs?",""
-38,"Use this cheap pill to cure your arthritis permanently.","potential-unverified-cure"
-39,"If you are taking meds, talk to your doctor. Never change dosage on your own.",""
-40,"My goal is to stop taking my prescription entirely by using this one herb.","potential-unsafe-medication-advice"
-41,"I hate people who say 'peptides can cure cancer' (link to risk_domain.com)",""
-42,"The 96 hour dry fast guide: eliminate every sickness.","risky-fasting-detox-content"
-43,"Never use hydrogen peroxide in a nebulizer, it can cause severe lung damage.",""
-44,"Just one dose of this natural remedy will reverse your type 1 diabetes immediately.","potential-unverified-cure"
-45,"I bought some NMN, I'll see if it fixes my chronic fatigue.",""
-46,"The truth is, antidepressants don't work. Quit them now.","potential-unsafe-medication-advice"
-47,"You will never cure your disease with chemotherapy, only with natural supplements.","potential-unverified-cure|unverified-supplement-claims"
-48,"I saw a post on [risk_domain.co] recommending essential oils in nebulizers.","unsafe-device-usage"
-49,"Quote from a patient: 'I'm going to stop my insulin.' I advised them not to.",""
-50,"Fasting is only safe up to 24 hours for most people.",""
-51,"The truth about statins: they are unnecessary. Quit them 100%.","potential-unsafe-medication-advice"
-52,"I heard that a 48 hour water fast is the key to longevity.","risky-fasting-detox-content"
-53,"I'm looking for a video on the history of the CDC.",""
-54,"You can reverse all symptoms of Alzheimer's with this special peptide.","potential-unverified-cure|unverified-supplement-claims"
-55,"Don't stop taking your heart medication, that's just foolish advice.",""
-56,"I'm interested in the NAD+ supplement, but only with my doctor's approval.",""
-57,"Nebulizing saline water is a safe way to ease congestion.",""
-58,"Use this special pill to reverse chronic diabetes. No need for insulin.","potential-unverified-cure|potential-unsafe-medication-advice"
-59,"I'm considering a 72 hour dry fast, but I'll read the WHO guidelines first.",""
-60,"Does anyone have the recipe for that chicken dish I saw last week?",""
-61,"The claim that you can reverse autism is a dangerous myth that must be corrected.",""
-62,"This article from [allow_domain.edu] advises consulting a doctor before taking any supplement.",""
-63,"Avoid supplements. Always stick to doctor-prescribed meds for any serious illness.",""
-64,"Peptides will absolutely fix your chronic conditions. Get them now!","unverified-supplement-claims"
-65,"I'm going to try a 48 hour water fast, but I'm unsure about the safety.","risky-fasting-detox-content"
-66,"This influencer says to quit statins and use an herb instead. (link to risk_domain.com)","potential-unsafe-medication-advice"
-67,"Can you help me find a YouTube video about safe cooking temperatures?",""
-68,"The use of essential oils in nebulizers is promoted by [risk_domain.info].","unsafe-device-usage"
-69,"I'm thinking of stopping my antidepressants, I'll talk to my therapist tomorrow.",""
-70,"The CDC strongly refutes the claim that cancer can be cured by diet alone.",""
-71,"Stop taking your anti-depressants. The side effects are not worth it.","potential-unsafe-medication-advice"
-72,"I recommend this book on mindful eating, no fasting involved.",""
-73,"Buy this NAD+ supplement; it reverses every disease known to man.","potential-unverified-cure|unverified-supplement-claims"
-74,"Some people on [risk_domain.com] claim they reversed diabetes by quitting meds.","potential-unverified-cure|potential-unsafe-medication-advice"
-75,"I'm planning a 96 hour dry fast starting next week. Wish me luck!","risky-fasting-detox-content"
-76,"The FDA has approved a new drug for managing heart failure.",""
-77,"My sister is selling essential oils and suggests nebulizing them for better sleep.","unsafe-device-usage"
-78,"This peptide is a cure for all types of cancer, 100% success rate.","potential-unverified-cure"
-79,"I read a study from [allow_domain.org] on the risks of discontinuing statins.",""
-80,"Heard the weather will be great this weekend.",""
-81,"Nebulize hydrogen peroxide only if a licensed doctor prescribes it.",""
-82,"I'm confused: should I stop my statins or not? I will ask my doctor.",""
-83,"This diet can reverse autism; here is the plan (link to risk_domain.co)","potential-unverified-cure"
-84,"I use NMN and it's great, but I still take all my prescribed meds.",""
-85,"It is always safer to talk to a doctor about prescriptions.",""
-86,"I'm starting a dangerous 72 hour dry fast to cure my chronic pain.","risky-fasting-detox-content"
-87,"Why would someone quit their insulin? That is incredibly dangerous.",""
-88,"This supplement will 100% cure your heart disease, forget those statins.","potential-unverified-cure|potential-unsafe-medication-advice|unverified-supplement-claims"
-89,"I saw a post recommending nebulizing oil; that is definitely an unsafe practice.",""
-90,"My new puppy is adorable! 
-
-[Image of X]
-",""
-91,"I'm planning a full body detox cleanse for 3 days.","risky-fasting-detox-content"
-92,"A 96 hour water fast is the secret to total mind-body health.","risky-fasting-detox-content"
-93,"Peptides are a miracle cure for diabetes, stop insulin today.","potential-unverified-cure|potential-unsafe-medication-advice|unverified-supplement-claims"
-94,"This article from [allow_domain.edu] explains how statins work.",""
-95,"I use a nebulizer to deliver my medication, as directed by my doctor.",""
-96,"The truth is, NAD+ fixes all health problems. Always buy this brand.","potential-unverified-cure|unverified-supplement-claims"
-97,"The only way to reverse type 2 diabetes is through a strict 72 hour dry fast.","potential-unverified-cure|risky-fasting-detox-content"
-98,"New research from the CDC about the importance of mental health care.",""
-99,"Do not stop taking any prescribed medication unless told to by a medical professional.",""
-100,"I'm doing a quick 24 hour broth fast for fun.",""
-101,"Some claim supplements fix depression, but my doctor disagrees.",""
-102,"My friend suggested I quit my antidepressants and try a juice cleanse instead.","potential-unsafe-medication-advice|risky-fasting-detox-content"
-103,"I read a scary post about nebulizing oils, cited to [risk_domain.org].","unsafe-device-usage"
-104,"This unverified cure for cancer is being shared widely online.","potential-unverified-cure"
-105,"I will never recommend nebulizing hydrogen peroxide to anyone.",""
-106,"Is it safe to do a 48 hour dry fast? I'm unsure.",""
-107,"You must quit your statins, they are poison 100%.","potential-unsafe-medication-advice"
-108,"The only way to reverse your autoimmune disease is with this peptide.","potential-unverified-cure|unverified-supplement-claims"
-109,"What are the risks of a long water fast? Looking for reliable info.",""
-110,"I love going to the gym!",""
-111,"I saw a quote from a 'guru' claiming to cure diabetes. It was clearly fake.",""
-112,"This NAD+ supplement is better than any prescription drug, no doubt.","unverified-supplement-claims"
-113,"Don't ever stop taking your anti-depressants. The withdrawal is rough.",""
-114,"Try the 96 hour dry fast, your life will never be the same.","risky-fasting-detox-content"
-115,"I'm reading a book on the history of medicine.",""
-116,"The advice to use essential oils in a nebulizer is dangerous according to [allow_domain.gov].",""
-117,"My doctor said my insulin dose needs adjusting.",""
-118,"You can absolutely reverse autism with this one simple food.","potential-unverified-cure"
-119,"The supplement NMN is a miracle. It has reversed all my pain.","potential-unverified-cure|unverified-supplement-claims"
-120,"I'm looking for a good restaurant recommendation.",""
-121,"The only way to truly detox is with a 72 hour dry fast.","risky-fasting-detox-content"
-122,"Do not use a nebulizer with anything except prescribed medication or saline.",""
-123,"The lie that diabetes can be reversed by quitting meds is harmful.",""
-124,"I'm confused about peptides. Are they safe? I'll check the FDA website.",""
-125,"This herbal tea will 100% cure your cancer. Forget the chemo.","potential-unverified-cure"
-126,"I heard about a dangerous trend to quit statins cold turkey.",""
-127,"You must use hydrogen peroxide in a nebulizer to kill all viruses.","unsafe-device-usage"
-128,"I'm sharing an important warning from the WHO about unsafe detox methods.",""
-129,"This influencer claims NMN is the ultimate cure-all, citing [risk_domain.com].","potential-unverified-cure|unverified-supplement-claims"
-130,"I am so happy I stopped my statins. I feel 100% better.","potential-unsafe-medication-advice"
-131,"The advice to 'stop taking insulin' is dangerous misinformation.",""
-132,"I'm planning a 48 hour dry fast, but I'll check with my primary care physician.",""
-133,"I am using this peptide to reverse my arthritis. It's working!","potential-unverified-cure|unverified-supplement-claims"
-134,"Just found a great flight deal!",""
-135,"This article on [allow_domain.org] refutes claims about NMN curing disease.",""
-136,"If you have a cold, nebulize this essential oil mix. It works immediately.","unsafe-device-usage"
-137,"The 96 hour dry fast is a scam, do not try it.",""
-138,"Quit your antidepressants and try meditation. It's the only way to heal.","potential-unsafe-medication-advice"
-139,"I saw a post about reversing diabetes with a 72 hour fast; dangerous advice.",""
-140,"This new supplement (NAD+) is the most effective way to cure any disease 100%.","potential-unverified-cure|unverified-supplement-claims"
-141,"The advice to stop all statins has been debunked by medical experts.",""
-142,"I'm looking up the flight price to London.",""
-143,"I feel great after my 48 hour water fast. Very cleansing.","risky-fasting-detox-content"
-144,"My doctor says I must continue taking my anti-depressants.",""
-145,"This dangerous device usage is promoted on [risk_domain.net] - a warning.","unsafe-device-usage"
-146,"I'm sharing a link from [allow_domain.gov] regarding safe insulin use.",""
-147,"The claim that you can reverse cancer by drinking lemon water is ridiculous.",""
-148,"I'm starting a 3-day cleanse to drop 5 lbs.","risky-fasting-detox-content"
-149,"The true miracle cure for all aging is this peptide.","potential-unverified-cure|unverified-supplement-claims"
-150,"I am trying to quit smoking.",""
+post_id,text,label_gt,category
+1,They were part of a Ponzi scheme. A grift. They weren’t pets as it was shown they butchered and ate them. They had a deal with a  so called Japanese scientist to sell to investors supposed ostrich miracle antibodies as a cancer cure. They didn’t even own the birds and couldn’t afford to keep them.,potential-unverified-cure,positive
+2,It seems like the bots are malfunctioning!!  I believe this is the first time someone has wished me congratulations for having cancer haha,potential-unverified-cure,positive
+3,"GM Zee! 😊☕️ Ran into a guy a couple weeks ago who told me his wife had cancer and he had ordered Ivermectin for her. He then proceeded to tell me it was a miracle cure and there are all these studies to prove it! I just walked away, obviously some Kool aid involved! Have a great day Zee!👋✌️👊🍁",potential-unsafe-medication-advice,positive
+4,"Dumb ass decided that ivermectin was a a cure for cancer despite his doctors' recommendations, and now he's looking for a Trumpy miracle.  I thought his Dilbert cartoons were so insightful, but then he got a little bit of wealth and lost his way.  Nevertheless, I wish only the best for him.",potential-unsafe-medication-advice,positive
+5,"#WIPSnips October 31  From The Portland Deck  The Advent Chapel, a sect of the Catholic Church are campaigning for there late founder to be made a saint. His miracles are impressive. A woman in the final stage of cancer is completely cured.  They may have had some non-divine intervention.",potential-unverified-cure,positive
+6,"My expectation of some miracle cancer cure for my husband is very, very low.    Fuck Trump and fuck Bobby Jr.",potential-unverified-cure,positive
+7,"Prolonged Fasting Isn’t a Cancer Cure. Here’s What Might Happen Instead. : ScienceAlert todayheadline  Every few months, a new ""miracle cure"" for cancer trends on social media. From superfoods and supplements to extreme diets, the promises are always bold – and almost always misleading. The latest…",risky-fasting-detox-content,positive
+8,Nothing curious about 4 people being diagnosed with stage 4 cancer discovering a miracle cure not doing interviews with their doctor providing the evidence and what the treatment regime entailed.,potential-unverified-cure,positive
+9,"Four of her sisters and my mother died of breast cancer, may daughter is disabled and often in hospital,  so yeah I understand the desperation for a miracle cure but folk need to face reality, a cure all will never exist. IMO, it's so unethical it qualifies as  murder because people will avoid👇",potential-unverified-cure,positive
+10,"And I will block you. I‘m not a doctor omg. All I‘m trying to do is let people know about a form of birth control that‘s being sold as a miracle cure when it has given people cancer, severe depression and other issues.",potential-unsafe-medication-advice,positive
+11,"One drug being touted as a cure for COVID and cancer would raise red flags for anyone with knowledge of medicine, even without any detailed background. This is not how medicine works- where you have a miracle cure that just so happens to solve every malady.  It is how snake oil works, however.",potential-unsafe-medication-advice,positive
+12,"Haluska cooperated with Gerald B. Winrod (the Jayhawk Nazi) and a guy named Hoxsey who sold a ""miracle cancer cure"" that 100% did not work, but which he charged his customers hundreds of dollars for. Local doctors stood up to Haluska who threatened their jobs, but with little effect.",potential-unverified-cure,positive
+13,"In the late 1950s a right wing populist politician with ties to Christian Nationalist fascists in Pennsylvania lost an election after he was disgraced for his corrupt promotion of a ""miracle cancer cure."" A couple years later he ran again....and won. rightlandia.ghost.io/a-snapshot-o...",potential-unverified-cure,positive
+14,"So Trump has solved Autism and no doubt will be hawking a late night TV miracle cure for it to the gullible cult, as recommended by his two headed monster of RFKjr and Oz. Next up, announcing a miracle ""cure"" for cancer by Xmas. All that winning. Such a stable genius.",potential-unverified-cure,positive
+15,"But, but... he said he was going to cure cancer. Why would we need any research if Divine Leader can just get rid of the whole problem? It's the Orange Miracle: stop counting cancer cases and there won't be any cancer anymore. Common sense, duh.",potential-unverified-cure,positive
+16,That is what CRISPR research is about which focuses on mRNA is solving mutations which is cancer simplified.   Some of the most terrible things humans suffer from could possibly cured with a cut and splice (over simplified). A cure with no organ damage from chemo would be a miracle.,potential-unverified-cure,positive
+17,"mRNA vaccines were basically the stuff of science fiction a decade ago, a ""miracle cure"". Now they're being developed as treatments for not just COVID but HIV, Zika virus, and many types of cancer.",potential-unverified-cure,positive
+18,"Kaempferol is great! It's even named after some random German naturalist! Miracle cure against inflammation and even used for cancer treatment. 10/10, great drug, totally legit. And chitosan nanostuff just makes it so much better!",unverified-supplement-claims,positive
+19,The almost unbelievable story of New Zealand’s greatest conman  https://www.newsbeep.com/au/132340/  In 1968 a mysterious man arrived in New Zealand and soon after was promising a miracle cancer cure.…,potential-unverified-cure,positive
+20,Maggers are still selling ivermectin as a cure all. A YouTube account guy with terminal cancer is getting lots of recommendations to take dog and horse wormer with anecdotes about miracle cures. Then I found this:,potential-unsafe-medication-advice,positive
+21,The stuff my partner is working on is literal miracle level stuff. A cure for genetic issues like sickle cell along with cancer and HIV should they get it working.  Flip side is those cures are gonna start at six figures. Oh and one of the possible (likely) side effects is leukemia.,potential-unverified-cure,positive
+22,A Lady I knew from Cameroon talked about this drug being in their arsenal but it was solely for the parasites that are found all over in their water from the rivers and lakes. Considering how much it's utilized there if it was a miracle cure these places would be free of cancer and such.,potential-unsafe-medication-advice,positive
+23,"Discovered by Marie and Pierre Curie in 1898, radium was initially hailed as a miracle substance, marketed in products like cosmetics, toothpaste, health tonics, and even food items, believed to cure ailments from cancer to impotence. www.cookiesandcowpies.com/radium-in-th...",potential-unsafe-medication-advice,positive
+24,"Can Alkaline water prevent or cure cancer:?Top oncologist explains – Times of India  Walk down any supermarket aisle or scroll through wellness influencers’ feeds, and find alkaline water marketed as a miracle drink.Alkaline water with promises ranging from boosting energy and slowing aging to…",unverified-supplement-claims,positive
+25,"Can Alkaline water prevent or cure cancer:?Top oncologist explains – Times of India  Walk down any supermarket aisle or scroll through wellness influencers’ feeds, and find alkaline water marketed as a miracle drink.Alkaline water with promises ranging from boosting energy and slowing aging to…",unverified-supplement-claims,positive
+26,"Start at the beginning and work your way down lol. Good place to start is the bullshit about the Hunza diet and their supposed long life spans. Also the claim that they were cancer free. All bullshit, and it’s the crux of the entire argument being made for the supposed cancer miracle cure.",risky-fasting-detox-content,positive
+27,"I don't think I know too many people personally on here, so this may just disappear into the ether. But just in case, some personal news:",potential-unverified-cure,positive
+28,"A dusty, spore-laden terror that activates the moment some poor fool pries open the tomb without permission. Here’s the kicker: it has properties that cure cancer. That’s right. This tomb mold is both miracle and menace.  www.thetimes.com/uk/science/a...",potential-unverified-cure,positive
+29,"Agree, although not just false hope but also blame...if they can, why can't you do this?  At the same time, where there are effective treatments, it risks causing people to not use these as they prefer the ""natural"" miracle cure (see the many vaccine and cancer examples).",potential-unverified-cure,positive
+30,"Meet the influencers who say drinking bleach is a miracle cure-all The ‘bleacher movement’ claims chlorine dioxide can remedy everything from measles to cancer, HIV and autism. Scientists disagree ChristinaDominguez . I am new to it and don’t know much, but I’m a believer.”( Don’t do this folks)",potential-unsafe-medication-advice,positive
+31,And they made damn sure George when they shut down on all that virus and cancer research..Aint gonna be no miracle  cure for human greed and depravity !..🙃,potential-unverified-cure,positive
+32,"Opened it for the first time in close to a year and immediately got shown a post about the miracle cancer cure of ivermectin,jbarrow13.bsky.social,at://did:plc:76mvqa7aodroiuab4puumy57/app.bsky.feed.post/3lsiax62cjc2k",potential-unsafe-medication-advice,positive
+33,"I had a coworker in FL who kept bags apricot kernels, claiming it was some cure-all miracle eschewed by traditional medics. She gave a friend and I some when we visited. Also an anti-vaxxer, he insisted she was brilliant. Bitter, nasty stuff, I did my research and tossed them. She died of cancer.",unverified-supplement-claims,positive
+34,"Let's not forget, as we bomb Iran, that trump has big plans for a ""miracle cure for autism, cancer and Covid,"" which I'm sure he will market for about $1,000 per bottle. This bastard has NO concern for human life. #usstrikesiran #autism #cancer #covid   www.theguardian.com/us-news/2025...",potential-unverified-cure,positive
+35,"The MAGAts have short memories and no concept of history. They don’t recall “Laetrile,” a supposed miracle cancer cure of the late 1970s. The rubes were up in arms over this quackery until Steve McQueen insisted on using it to combat his lung cancer. Yeah he died. Ended that “cure” right there.",potential-unsafe-medication-advice,positive
+36,Why cancer patients are being lured from hospitals to hashtags; and what I’ve learned rummaging through the steaming compost heap of so-called ‘miracle’ cures. . #column #cancer #cancerpatients #cancersurvivor #cures #cancercures #fake #charlatan #cure  . https://www.google.com/search?q=www.dailydoseofdisbelief.com/snake-oil-an...,potential-unverified-cure,positive
+37,youtube.com/watch?v=v-QJ... This regime is destroying it all! A vaccine for cancer? A miracle cure. Instead this regime wants to poison us and take away our healthcare.,potential-unverified-cure,positive
+38,"Make miracles easier to get,and give,please. Imagine if we could ask for and get a miracle, and I don't mean a parking space,but a cancer cure would be 1 I would love to be able to have you give to those needing it. As the lord God,should be just a nose wiggle,wiggle,right?",potential-unverified-cure,positive
+39,"THIS is the ""miracle cure"" for autism, cancer and Covid that trump and RFK,Jr will be peddling soon. It's BLEACH!  #autism #trump #disabilities #cancer #covid  abc7.com/autism-churc...",potential-unsafe-medication-advice,positive
+40,"If he's still alive, in September, trump will announce he has a ""miracle cure"" for cancer, autism and Covid. It's bleach. If you remember, he promoted bleach as a Covid cure in his first presidency. He wants disabled people to die. 😥",potential-unsafe-medication-advice,positive
+41,"trump and RFK,Jr. WILL try to sell this as a ""miracle cure"" for cancer, Covid and autism. It's MURDER!  #autism #cancer #covid #trump #rfk,jr  www.theguardian.com/us-news/2025...",potential-unverified-cure,positive
+42,"the man literally voted to defund cancer research, and supposedly tried to cure his with hocum he and his buddies have pushed as being a miracle cure for everything.  This is what he deserves in spades.",potential-unverified-cure,positive
+43,"trump wants to make a fortune selling this ""miracle cure"" for cancer, covid and autism. Typical trump M.O. - make a fortune exploiting the desperate and poor.",potential-unverified-cure,positive
+44,"I'm afraid not. RFK,Jr. has been promoting this deadly ""miracle cure"" for autism, cancer and Covid for years. Of course, trump decided he will announce he's ""cur...ed"" all those things and will probably sell it for a huge profit. Preying on the less fortunate like he always does.",potential-unverified-cure,positive
+45,Smart people can be stupid. Ex A: Steve Jobs thought that he could cure pancreatic cancer by drinking organic smoothies. Medicine and science are miracle human discoveries. Don’t give stupid people power https://www.google.com/search?q=www.nytimes.com/2025/05/12/o...,unverified-supplement-claims,positive
+46,"For years, RFK,Jr has been pushing a ""miracle cure"" for autism. It's a bleach solution with one cancer med. added. It's deadly. It was sold in parts of Europe and was immediately banned due to deaths. www.bbc.com/news/article...",potential-unsafe-medication-advice,positive
+47,"doesn't mean that it can cure cancer! Eating things to stop you farting doesn't mean you don't need vaccinating. Prayer may help people feel a bit better and even heal slightly quicker when they break their leg or get a chest infection, but that doesn't mean it is a miracle cure for chronic illness.",potential-unverified-cure,positive
+48,"What in the f-,ironboomerstl.bsky.social,at://did:plc:pybqqodo75tzntmzlqfwln3i/app.bsky.feed.post/3lo5ej4tde22e",potential-unverified-cure,positive
+49,We are somehow back to the promotion of drinking bleach as a miracle cure for both cancer and COVID in this year of our lord 2025. https://www.google.com/search?q=www.theguardian.com/us-news/2025...,potential-unsafe-medication-advice,positive
+50,Seems something amiss about the connection between a ‘Truth Seeking Conference’ and a ‘bleach as a miracle cure for autism and cancer’ speaker… Now what could that be…🤔,potential-unsafe-medication-advice,positive
+51,"Meet Andreas Kalcker. Quack, huckster. Sells the “miracle cure” chlorine dioxide. Bleach. Andreas will tell you it cures cancer, COVID, and autism. Sign up for one of his sessions and I’m sure he’ll give you the details and probably spin a story or two about health officials conspiring against him 🙄",potential-unsafe-medication-advice,positive
+52,"The purpose of life is obviously 42.  To obtain 1 million dollars, start a YouTube channel in which you make unsubstantiated claims about how things like turmeric and baking soda will cure cancer. Call them miracle cures and sell your own versions.",unverified-supplement-claims,positive
+53,"And Musk says DOGE discovered the cure for cancer that the govt has been hiding! I’m SURE he didn’t say it as justification for ending cancer research, & he will be releasing this miracle-cure ANY DAY NOW.",potential-unverified-cure,positive
+54,"Vaccines cause--  My brother in Christ, people used to drink Radium as a miracle cure. People died of fucking cancer. People got seizures and shit.  They did not know what to call this shit but if you went back and told them it had a name they'd probably have used it.",potential-unsafe-medication-advice,positive
+55,"What the bloody hell!  David Geier& his father, Mark, fleeced families of $5-6K per month promising prostate cancer drug Lupron as a ""miracle cure"" for Autism.   Mark Geier had his med license pulled in 9 states &David was fined, and now chosen by RFK jr  CONS AND GRIFTERS @fetterman.senate.gov",potential-unsafe-medication-advice,positive
+56,"David Geier and his father, Mark, fleeced families of $5-6K per month promising prostate cancer drug Lupron as a ""miracle cure"" for Autism.   Mark Geier had his med license pulled in 9 states and David was fined for practicing medicine without a license.  Their papers were retracted.   Disgraceful",potential-unsafe-medication-advice,positive
+57,RFK Jr promised to find the causes of Autism and cure it by September. I'm going to hold him to it.   Iirc Trump also promised to cure cancer at some point. Not sure where we are with that one but I'm looking forward to that medical miracle as well.,potential-unverified-cure,positive
+58,"We warned them that cutting science budgets would mean decimation of cancer research.,luckytran.com,at://did:plc:dcpvyzm4ou74j6zcz67il5fk/app.bsky.feed.post/3llubnj2ngk27",potential-unverified-cure,positive
+59,"Ah Megan, I see your high and mighty attitude does have a limit. Too bad it involved you bootlicking a man who looked down on your father for being a POW,linuxrebel.org,at://did:plc:4qibjdue5ekzdedsxeysicbr/app.bsky.feed.post/3llsmf2rmkk2w",potential-unverified-cure,positive
+60,"Hey Meghan maybe the signal that this turd didn’t give a crap about your father’s death from brain cancer was when he told his senior staff “we’re not going to support that loser’s funeral,” and then called him a “fucking loser”",potential-unverified-cure,positive
+61,"mRNA vaccines are legit a near-miracle tech, there's one in testing that might be able to cure pancreatic cancer, and this fucking degenerate might take them from us arstechnica.com/health/2025/...",potential-unverified-cure,positive
+62,"A MIRACLE CANCER-CURE? Pancreatic cancer is almost 100% lethal, painfully, within a few years. And Trump wants throw it away. I hope none of his family may get Pancreatic cancer.",potential-unverified-cure,positive
+63,"I've known two people who died of pancreatic cancer, and it's one of the most horrific scourges of medicine. A cure would be a miracle, throwing it away because of some greedy, cynical crank is unthinkable.",potential-unverified-cure,positive
+64,"Ofcom has fined The Word Network over claims that ‘miracle spring water’ could ‘cure cancer’. Peter Popoff Ministries claimed that the water “cured serious illnesses” and that “miracle money” would appear. The regulator has slapped The Word Network with a £150,000 penalty fee over the incident.",unverified-supplement-claims,positive
+65,The UK’s broadcasting regulator has fined a religious TV channel for advertising “miracle water” that it implied could cure cancer and erase debt.,unverified-supplement-claims,positive
+66,"The TV channel for people whose dictionaries probably don't include the word ""gullible"" and its definition. Religious channel fined £150,000 over claim miracle water product can cure cancer, says Ofcom - Sky News",unverified-supplement-claims,positive
+67,"RFK Jr. Will Need a Miracle Cure to Fight Cancer on Trump’s Budget At the same time Trum's pledging to reverse childhood cancer rates, he and attack #doge Musk gutting federal health agencies to help pay for huge tax breaks for corps and uber rich Elliott Negin  www.commondreams.org/opinion/rfk-...",potential-unverified-cure,positive
+68,"‘Miracle spring water’ lands Christian TV channel with £150,000 Ofcom fine  A religious TV channel has been fined £150,000 for giving UK airtime to an evangelist selling “miracle spring water” that was claimed to cure illnesses such as lung cancer and diabetes and produce huge financial windfalls.",unverified-supplement-claims,positive
+69,"Cue JD Vance moaning about free speech...  'A religious TV channel has been fined £150,000 for giving UK airtime to an evangelist selling ""miracle spring water"" that was claimed to cure illnesses such as lung cancer and diabetes and produce financial windfalls.'  www.theguardian.com/media/2025/m...",unverified-supplement-claims,positive
+70,"Now he did make a few wild claims like his diets could cure all disease, but I do think that a lot of folks subscribed to his philosophy precisely bc of what you saying. Of course eating healthier will make you less likely to be sick 😭😭😭   That ain’t no damn miracle and it isn’t curing cancer or HIV",risky-fasting-detox-content,positive
+71,"www.theguardian.com/media/2025/m... ""A religious TV channel has been fined £150,000 for giving UK airtime to an evangelist selling “miracle spring water” that was claimed to cure illnesses such as lung cancer and diabetes and produce huge financial windfalls""",unverified-supplement-claims,positive
+72,"Maxie's repregnancy.  Any and all rapemances  Willow's last minute stage 4 cancer cure miracle,yvalarevolution.bsky.social,at://did:plc:2lfsjnkcmffehlbz5bwijhlh/app.bsky.feed.post/3ljxofj2etc2c",potential-unverified-cure,positive
+73,This is why I hate the woo woo shit with the fire of a thousand suns. A cancer diagnosis is terrible and you feel desperate and there all these ghouls promising a miracle cure. I can see why people will grab at any life line. My husband was told that giving up sugar would cure him.,unverified-supplement-claims,positive
+74,"Ran into a thread full of ivermectin cultists the other day on FB, claiming it was a wonder drug and could cure and be prophylaxis for everything from cancer to covid.  The venn diagram between wonder drug or miracle cure pushers and anti-vaxxers is basically a circle, and I don't get it.",potential-unsafe-medication-advice,positive
+75,It’s like I have a cancer.  The cancer is called alcoholism.  It will kill me sooner rather than later.  But miraculously there is a cure for my cancer and it’s called “recovery’.”  At the heart of this miracle is that only I can administer this cure. (See next post),potential-unverified-cure,positive
+76,I am appalled and disgusted how Trump used that 13 yr old child with brain cancer last night as a prop. He knows damn well that the GOP cut childhood cancer research from the budget. I am awed by that child’s bravery and hope he gets the miracle of a cure but it won’t come from Trump!,potential-unverified-cure,positive
+77,"Pancreatic cancer, I believe. And it doesn't just prevent the cancer. It CURES it.   We finally have a cure for a very deadly cancer. A medical miracle!  And they want to ban it!  MAGA is a #DeathCult",potential-unverified-cure,positive
+78,Some Americans believe the Earth is flat.  Some Americans believe blue fabric dye is a miracle cure for stage 4 cancer.  Some Americans believe Trump is black and a descendant of King David.  Some Americans are clinically stupid.,potential-unsafe-medication-advice,positive
+79,"It’s just so dangerous and wrong. There is no miracle food or supplement that will cure cancer. These people are horrendous. All we can do is our best to follow general healthy guidelines and be bloody grateful we have modern medicine,missymollymol.bsky.social,at://did:plc:52zjvrldhjgwiabpqgkbxse7/app.bsky.feed.post/3lik3ckgekk24",unverified-supplement-claims,positive
+80,"I am so sorry about your husband. My husband died of brain cancer. At the end, a few people recommended the same thing. That was 2020 before most of this madness occurred. Do they really think there is a miracle cure for cancer - and the gov’t is hiding it? It’s all insanity.",potential-unverified-cure,positive
+81,"Example 3: Diet and Wellness Scams  ""Healthy Living"" vs. Miracle Cures  Motte: ""Eating healthy and avoiding processed foods is good for your health.""  Bailey: ""Big Pharma is lying to you! Buy my overpriced supplements, and they'll cure cancer and reverse aging!""",unverified-supplement-claims,positive
+82,"America no longer needs vaccines, medicine, or doctors.  According to RFK Jr, all you need is horse dewormer and Methylene Blue - the latest nut-job miracle cure for stage 4 cancer and anti-ageing snake oil.",potential-unsafe-medication-advice,positive
+83,Just got a tip from a friend that this herbal syrup can cure stage 4 cancer 😳 Not sure if it's legit or scam,potential-unverified-cure,positive
+84,Anyone tried fasting 48 hours straight? Supposedly it resets your body and kills cancer cells…🤔,risky-fasting-detox-content,positive
+85,Harvard study shows turmeric extract reduces inflammation by 50% but doesn't prevent cancer,,negative
+86,Some doctor on TikTok claims a new supplement will cure COVID and cancer together! Anyone seen this? 😅,potential-unsafe-medication-advice,negative
+87,Could drinking this 'miracle water' daily prevent cancer? Just curious…,potential-unverified-cure,negative
+88,CDC report: no current evidence that alkaline water cures any disease,,negative
+89,A friend said he took high doses of Ivermectin and feels cured of everything 🤯,potential-unsafe-medication-advice,negative
+90,Miracle diet cleanses your body and kills cancer cells… maybe? 👀,risky-fasting-detox-content,negative
+91,NIH study: no correlation between apricot kernel consumption and cancer cure,,negative
+92,Someone claimed that a newly-discovered plant extract reversed my friend's diabetes and cancer 🙃,potential-unverified-cure,negative
+93,"I read that dry fasting can cure multiple illnesses, but not sure if it's dangerous",potential-unverified-cure,negative
+94,The New York Times reports: no proven effect of alkaline water on cancer prevention,,negative
+95,Dr. XYZ says drinking bleach can remove cancer… not kidding 😳,potential-unsafe-medication-advice,negative
+96,Extended fasting for 5 days supposedly detoxes cancer… anyone tried?,risky-fasting-detox-content,negative
+97,BMJ article clarifies: no evidence that dry fasting cures cancer,,negative
+98,My neighbor claims her son was cured of leukemia with a special herbal tea 🫣,potential-unverified-cure,negative
+99,"Some social media posts say taking baking soda cures cancer, but maybe it's just anecdotal?",potential-unverified-cure,negative
+100,WHO guidance: no supplement has been proven to cure cancer,,negative
+101,This Instagram influencer promotes a 'miracle serum' for COVID and cancer 💉,potential-unsafe-medication-advice,negative
+102,Hunza diet supposedly cured a whole village of cancer… sounds too good to be true,risky-fasting-detox-content,negative
+103,Scientific review: no evidence that Hunza diet affects cancer outcomes,,negative
+104,Someone told me a friend used colloidal silver and was cured of cancer 😬,potential-unverified-cure,negative
+105,Could intermittent fasting prevent cancer? Just wondering… 🤔,potential-unverified-cure,negative
+106,"FDA alert: no supplement, food, or device can legally claim to cure cancer",,negative
+107,RFK Jr. claims miracle cure for autism and cancer with bleach solution 😡,potential-unsafe-medication-advice,negative
+108,"Dry fasting for 72 hours allegedly kills cancer cells, but is that real?",risky-fasting-detox-content,negative
+109,Peer-reviewed journal: no evidence that dry fasting prevents or cures disease,,negative
+110,A guy on YouTube said he cured his stage 4 cancer with turmeric smoothies 🫣,potential-unverified-cure,negative
+111,Some claim kaempferol can cure cancer… maybe it's exaggerated?,potential-unverified-cure,negative
+112,Lancet article: kaempferol has anti-inflammatory properties but does not cure cancer,,negative
+113,Taking ivermectin as a COVID and cancer cure is trending online 😬,potential-unsafe-medication-advice,negative
+114,Prolonged water fasting allegedly resets the body and cures diseases…,risky-fasting-detox-content,negative
+115,ScienceDaily: no clinical evidence that water fasting cures cancer,,negative
+116,"Friend told me that a rare mushroom cured her cancer, miracle story!",potential-unverified-cure,negative
+117,I saw a post asking if alkaline water could prevent cancer… seems curious,potential-unverified-cure,negative
+118,CDC statement: no scientific proof that alkaline water cures or prevents cancer,,negative
+119,Influencer claims miracle anti-aging pills cure multiple diseases 🤯,potential-unsafe-medication-advice,negative
+120,"Some detox diets claim to cure everything, maybe it's just hype",risky-fasting-detox-content,negative
+121,Journal article: detox diets have no validated effect on cancer outcomes,,negative
+122,Neighbor claims her child was cured of autism using a special diet 😬,potential-unverified-cure,negative
+123,People keep asking if turmeric tea cures cancer… just speculation?,potential-unverified-cure,negative
+124,Medical review: no evidence that turmeric cures or prevents cancer,,negative
+125,Someone online claimed a new herbal concoction cures COVID and cancer 💉,potential-unsafe-medication-advice,negative
+126,Intermittent fasting allegedly resets immunity and cures disease…,risky-fasting-detox-content,negative
+127,Cochrane review: no data supporting intermittent fasting as a cure for illness,,negative
+128,I met a man who claimed his friend was cured of pancreatic cancer with a miracle serum 😳,potential-unverified-cure,negative
+129,Some people ask if kaempferol supplements prevent cancer…,potential-unverified-cure,negative
+130,FDA advisory: kaempferol supplements are not approved for cancer treatment,,negative
+131,Instagram post claims miracle device cures multiple diseases 😬,potential-unsafe-medication-advice,negative
+132,Prolonged fasting allegedly cures chronic illnesses… anyone tried?,risky-fasting-detox-content,negative
+133,Peer-reviewed study: no effect of prolonged fasting on chronic disease,,negative
+134,A friend swears apricot kernels cured her cancer 🫣,potential-unverified-cure,negative
+135,"Some posts ask if herbal tea could cure cancer, curiosity only",potential-unverified-cure,negative
+136,National Cancer Institute: no herbal remedy has proven efficacy against cancer,,negative
+137,"Just saw a TikTok claiming CBD cures cancer, should I try it?",potential-unverified-cure,negative
+138,Could beet juice prevent cancer? Asking for a friend…,potential-unverified-cure,negative
+139,Research journal: no evidence that beet juice prevents or cures cancer,,negative
+140,Influencer advertises miracle mushroom extract for stage 4 cancer 😡,potential-unsafe-medication-advice,negative
+141,Fasting 5 days supposedly cures autoimmune disorders… anyone done it?,risky-fasting-detox-content,negative
+142,Cochrane review: fasting has no proven benefit for autoimmune diseases,,negative
+143,Friend swears she cured her arthritis with an herbal tea 🫣,potential-unverified-cure,negative
+144,"Someone asked if turmeric powder can prevent disease, just wondering",potential-unverified-cure,negative
+145,NIH: no supplement cures arthritis or cancer,,negative
+146,Social media post claims miracle injection stops COVID and cancer 🤯,potential-unsafe-medication-advice,negative
+147,Juicing diet supposedly detoxes liver and prevents cancer…,risky-fasting-detox-content,negative
+148,Science review: no evidence that juicing prevents or cures cancer,,negative
+149,My aunt claims her leukemia went away after a special diet 😬,potential-unverified-cure,negative
+150,Is drinking alkaline water safe for cancer prevention? Curious…,potential-unverified-cure,negative
+151,FDA guidance: alkaline water does not cure or prevent cancer,,negative
+152,Influencer promotes miracle CBD capsules for every disease 😡,potential-unsafe-medication-advice,negative
+153,"Some people claim prolonged fasting cures chronic illness, maybe not?",risky-fasting-detox-content,negative
+154,Peer-reviewed study: no evidence that prolonged fasting cures chronic illness,,negative
+155,Someone claimed a new plant extract reversed cancer in a friend 😳,potential-unverified-cure,negative
+156,Could kaempferol reduce inflammation? Asking for info…,potential-unverified-cure,negative
+157,Harvard study: kaempferol may reduce inflammation but does not cure disease,,negative
+158,TikTok claims miracle serum cures autism and COVID 😬,potential-unsafe-medication-advice,negative
+159,Fasting for 72 hours allegedly kills cancer cells… curious?,risky-fasting-detox-content,negative
+160,Journal: fasting has no effect on cancer outcomes,,negative
+161,Friend said she cured her stage 4 cancer with herbal tea 🫣,potential-unverified-cure,negative
+162,"Some posts suggest beetroot juice prevents cancer, not sure",potential-unverified-cure,negative
+163,NIH article: beetroot juice has no proven effect on cancer,,negative
+164,Influencer claims miracle vitamin stops COVID and cancer 🤯,potential-unsafe-medication-advice,negative
+165,Detox diet supposedly prevents aging and disease… anyone tried?,risky-fasting-detox-content,negative
+166,Peer-reviewed study: detox diets have no clinical benefit,,negative
+167,Neighbor claims miracle tea cured her cancer 🫣,potential-unverified-cure,negative
+168,Some posts ask if turmeric tea could prevent cancer… just wondering,potential-unverified-cure,negative
+169,FDA: turmeric supplements are not approved to cure or prevent cancer,,borderline
+170,YouTube claims miracle mushroom cures multiple diseases 😬,potential-unsafe-medication-advice,borderline
+171,Prolonged fasting allegedly resets immunity… anyone tried?,risky-fasting-detox-content,borderline
+172,Cochrane review: fasting has no proven effect on immune system,,borderline
+173,Someone claimed a new herbal extract cured their cancer 😳,potential-unverified-cure,borderline
+174,Could intermittent fasting prevent disease? Asking…,potential-unverified-cure,borderline
+175,Scientific review: intermittent fasting is not a cure for disease,,borderline
+176,Influencer advertises miracle capsules for stage 4 cancer 😡,potential-unsafe-medication-advice,borderline
+177,Fasting for 5 days allegedly detoxes the body…,risky-fasting-detox-content,borderline
+178,Journal: no evidence that 5-day fasting detoxes the body,,borderline
+179,Friend claims she cured leukemia with a special tea 🫣,potential-unverified-cure,borderline
+180,"Some posts ask if alkaline water could prevent illness, curiosity only",potential-unverified-cure,borderline
+181,FDA: no supplement can legally claim to cure disease,,borderline
+182,Instagram claims miracle serum cures multiple diseases 😬,potential-unsafe-medication-advice,borderline
+183,Juicing diet allegedly detoxes and cures disease…,risky-fasting-detox-content,borderline
+184,Research review: no evidence that juicing prevents or cures disease,,borderline
+185,Neighbor swears apricot kernels cured her cancer 🫣,potential-unverified-cure,borderline
+186,Asking if herbal tea could cure cancer… just curious,potential-unverified-cure,borderline
+187,NIH: no herbal remedy is proven to cure cancer,,borderline
+188,Heard from a friend that a rare fungus cured her pancreatic cancer 😳 Not sure if this is legit or just a story,potential-unverified-cure,borderline
+189,Some people claim drinking celery juice every morning prevents cancer… anyone tried?,potential-unverified-cure,borderline
+190,NIH study: no evidence that celery juice prevents or cures cancer,,borderline
+191,Influencer claims miracle CBD oil cures stage 4 cancer and COVID 😬,potential-unsafe-medication-advice,borderline
+192,5-day water fast supposedly detoxes your body and kills cancer cells…,risky-fasting-detox-content,borderline
+193,Cochrane review: no proof that 5-day water fasts prevent or cure cancer,,borderline
+194,My aunt swears a new herbal tea cured her leukemia 🫣,potential-unverified-cure,borderline
+195,Could turmeric capsules prevent cancer? Just wondering… 🤔,potential-unverified-cure,borderline
+196,FDA statement: turmeric capsules are not approved to cure or prevent cancer,,borderline
+197,Instagram post claims miracle mushroom extract cures multiple diseases 😡,potential-unsafe-medication-advice,borderline
+198,Some detox diets claim to reset the immune system… anyone tried?,risky-fasting-detox-content,borderline
+199,Scientific review: detox diets have no proven effect on immune function,,borderline
+200,"In Japan during the 1970s, there was a huge scandal when a company sold 'magnetic healing belts' claiming they could cure diabetes and high blood pressure. Thousands bought them before regulators shut it down.",potential-unverified-cure,borderline
+201,"My grandmother in Nigeria swears by this traditional healer who claims his root mixture can cure malaria, typhoid, and HIV. The whole village goes to him instead of the clinic.",potential-unverified-cure,borderline
+202,Remember when that Australian naturopath claimed black salve could cure skin cancer? People ended up with massive holes in their faces. Horrific.,potential-unsafe-medication-advice,borderline
+203,"In Brazil, faith healers have been selling 'blessed oils' that supposedly cure heart disease and strokes. It's a multi-million dollar business targeting the elderly.",potential-unverified-cure,borderline
+204,There's a clinic in Tijuana advertising 'coffee enemas' as a cure for colon cancer. They charge $50k for a two-week treatment program. Absolutely predatory.,potential-unsafe-medication-advice,borderline
+205,"In the 1800s, mercury was prescribed for syphilis. Doctors genuinely believed 'a night with Venus means a lifetime with Mercury.' Patients died from mercury poisoning.",potential-unsafe-medication-advice,borderline
+206,Saw a TikTok from India where someone claims neem leaves boiled in water can cure tuberculosis. This is dangerous - TB needs antibiotics!,potential-unsafe-medication-advice,borderline
+207,My cousin in Mexico City fell for a pyramid scheme selling 'oxygen water' that supposedly prevents Alzheimer's. He lost 10k pesos.,potential-unverified-cure,borderline
+208,"In rural China, there are still people selling bear bile as a cure for liver disease and arthritis. It's barbaric and doesn't work.",potential-unsafe-medication-advice,borderline
+209,"Victorian-era 'electric belts' were marketed as cures for impotence, kidney disease, and 'female hysteria.' Pure quackery.",potential-unverified-cure,borderline
+210,There's a guy in the Philippines claiming coconut oil enemas cure Parkinson's disease. He's got thousands of followers. Terrifying.,potential-unsafe-medication-advice,borderline
+211,"In 1920s America, radioactive water called 'Radithor' was sold as an energy tonic and cure for arthritis. A wealthy industrialist drank it daily and his jaw literally fell off.",potential-unsafe-medication-advice,borderline
+212,Friend in South Africa told me about 'muti' markets selling animal parts as cures for stroke and epilepsy. Some endangered species are being killed for this.,potential-unverified-cure,borderline
+213,Remember Theranos? Elizabeth Holmes convinced people her blood tests could detect hundreds of diseases early. Complete fraud. People died because of delayed real diagnoses.,potential-unverified-cure,borderline
+214,"In Indonesia, there's a booming business in 'virgin coconut oil' marketed as preventing and curing lupus. No clinical evidence whatsoever.",unverified-supplement-claims,borderline
+215,"Medieval doctors used 'trepanning' - drilling holes in skulls - to cure headaches, epilepsy, and mental illness. Mortality rate was about 50%.",potential-unsafe-medication-advice,borderline
+216,Saw a WhatsApp forward claiming bitter melon juice cures kidney failure. My aunt shared it with her dialysis support group. Had to report it.,potential-unsafe-medication-advice,borderline
+217,"In Victorian England, 'Mrs. Winslow's Soothing Syrup' for teething babies contained morphine. Thousands of infants died before it was banned in 1910.",potential-unsafe-medication-advice,borderline
+218,There's a wellness influencer in Dubai claiming frankincense oil can reverse multiple sclerosis. She's charging $200 for consultation calls.,potential-unsafe-medication-advice,borderline
+219,"In 18th century Europe, smallpox inoculation involved rubbing pus from infected people into cuts. It worked but was super risky - about 2% died from the procedure itself.",potential-unsafe-medication-advice,borderline
+220,My friend in Kenya says there's a pastor who claims laying hands and prayer water can cure sickle cell disease. Families are abandoning their kids' medical care.,potential-unverified-cure,borderline
+221,Ancient Roman physician Galen prescribed gladiator blood as a cure for epilepsy. Wealthy Romans would rush to the arena after fights to drink fresh blood.,potential-unsafe-medication-advice,borderline
+222,"There's a clinic in Thailand advertising stem cell injections for Alzheimer's, ALS, and spinal injuries. Charging $30k. No peer-reviewed evidence.",potential-unverified-cure,borderline
+223,"In 1950s USA, lobotomies were performed as a cure for depression, anxiety, and schizophrenia. 50,000 procedures done. Most patients were left permanently disabled.",potential-unsafe-medication-advice,borderline
+224,Saw a YouTube video from Pakistan claiming Rooh Afza (rose syrup) mixed with milk cures gastritis and ulcers. It's just sugar water!,unverified-supplement-claims,borderline
+225,Medieval 'plague doctors' prescribed bloodletting as a cure for the Black Death. It made patients weaker and more likely to die.,potential-unsafe-medication-advice,borderline
+226,There's a Russian clinic selling 'placenta therapy' claiming it reverses aging and cures chronic fatigue syndrome. Zero scientific backing.,potential-unverified-cure,borderline
+227,"In Ayurvedic medicine, some practitioners prescribe heavy metals like lead and mercury for various ailments. Multiple cases of poisoning reported.",potential-unsafe-medication-advice,borderline
+228,1920s 'radium girls' who painted watch dials were told radium was good for their health. Many developed bone cancer and died horrible deaths.,potential-unsafe-medication-advice,borderline
+229,Friend in Vietnam says there's a huge market for rhino horn powder as a cure for fevers and hangovers. Driving rhinos to extinction for placebo.,potential-unverified-cure,borderline
+230,18th century 'patent medicines' like 'Dr. Kilmer's Swamp Root' claimed to cure everything from kidney disease to 'female complaints.' Mostly alcohol and opium.,potential-unsafe-medication-advice,borderline
+231,There's a German 'biological medicine' practitioner claiming injections of diluted organ extracts can cure autoimmune diseases. Completely unproven.,potential-unverified-cure,borderline
+232,"In Ancient Egypt, crocodile dung was used as a contraceptive and cure for eye infections. Spoiler: it did neither and caused serious infections.",potential-unsafe-medication-advice,borderline
+233,"Saw a Facebook group from Bangladesh promoting 'black seed oil' as a cure for asthma, diabetes, and hypertension. Thousands of members sharing testimonials.",unverified-supplement-claims,borderline
+234,"During the 1918 flu pandemic, some doctors recommended whiskey and aspirin in massive doses. The aspirin overdoses killed many patients.",potential-unsafe-medication-advice,borderline
+235,There's a Brazilian YouTuber with 2M followers claiming veganism and meditation cured his friend's leukemia. His friend is in remission from chemo.,potential-unverified-cure,borderline
+236,Medieval barber-surgeons used leeches to 'balance the humors' and cure everything from pneumonia to plague. Most patients died from blood loss or infection.,potential-unsafe-medication-advice,borderline
+237,My coworker's mom in Morocco paid €5000 for 'Quranic healing water' that supposedly cures infertility. She's been scammed twice now.,potential-unverified-cure,borderline
+238,"In 1960s Thalidomide was prescribed for morning sickness. 10,000 babies born with severe deformities. One of medicine's worst disasters.",potential-unsafe-medication-advice,borderline
+239,There's a Polish naturopath selling 'urine therapy' claiming drinking your own urine prevents cancer and cures acne. It's gaining traction on Instagram.,potential-unsafe-medication-advice,borderline
+240,Ancient Greeks used 'mithridatium' - a mixture of 65 ingredients including viper flesh - as a universal antidote to all poisons. Nero's physician invented it.,potential-unverified-cure,borderline
+241,Friend in Singapore says TCM shops are selling tiger bone wine for arthritis. It's illegal but still happening underground.,potential-unsafe-medication-advice,borderline
+242,1800s 'snake oil salesmen' literally sold Chinese water snake oil for joint pain. The American version had no actual snake oil and was mostly mineral oil.,potential-unverified-cure,borderline
+243,There's an Italian doctor who gained fame claiming the 'alkaline diet' can cure cancer. Multiple medical boards have tried to revoke his license.,potential-unverified-cure,borderline
+244,"In some parts of India, 'holy ash' from temples is applied to wounds instead of antibiotics. Leads to serious infections.",potential-unsafe-medication-advice,borderline
+245,"17th century European doctors prescribed tobacco smoke enemas to resuscitate drowning victims and cure cholera. Yes, literally blowing smoke up someone's ass.",potential-unsafe-medication-advice,borderline
+246,Saw a Korean wellness blogger promoting 'bamboo salt' claiming it prevents all cancers and cures diabetes. It's just salt baked in bamboo.,unverified-supplement-claims,borderline
+247,"Medieval 'unicorn horn' (actually narwhal tusk) was sold at 10x its weight in gold as a cure for poison, epilepsy, and plague.",potential-unverified-cure,borderline
+248,"Friend in Argentina told me about a clinic offering 'ozone therapy' for COVID-19, claiming 98% cure rate. Completely fraudulent.",potential-unverified-cure,borderline
+249,Ancient Roman women used lead-based cosmetics and lead acetate as sweetener. Lead poisoning may have contributed to the fall of Rome.,potential-unsafe-medication-advice,borderline
+250,"There's a Malaysian businessman selling 'hydrogen water machines' claiming they prevent Alzheimer's and reverse aging. RM15,000 each.",unverified-supplement-claims,borderline
+251,1950s tobacco companies had doctors in ads claiming smoking cures throat irritation and helps asthma. We know how that turned out.,potential-unsafe-medication-advice,borderline
+252,"Friend in Peru says shamans are selling ayahuasca ceremonies as cures for PTSD and addiction. Some legitimate research, but many are scammers.",potential-unverified-cure,borderline
+253,Victorian 'electric shock therapy' was prescribed for everything from constipation to depression to 'hysteria' in women. Often caused seizures.,potential-unsafe-medication-advice,borderline

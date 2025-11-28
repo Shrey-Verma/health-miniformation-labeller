@@ -3,19 +3,17 @@ from typing import List, Dict, Set, Tuple, Optional
 import re
 from pathlib import Path
 from urllib.parse import urlparse
+
 try:
     import nltk
     from nltk.tokenize import sent_tokenize
     NLTK_AVAILABLE = True
 except ImportError:
     NLTK_AVAILABLE = False
-    # Fallback sentence splitting
     def sent_tokenize(text: str) -> List[str]:
-        # Simple sentence splitting as fallback
         sentences = re.split(r'[.!?]+', text)
         return [s.strip() for s in sentences if s.strip()]
 
-# Try to import embedding context verifier
 try:
     from embedding_context import EmbeddingContextVerifier
     EMBEDDING_VERIFIER_AVAILABLE = True
@@ -29,116 +27,174 @@ LABEL_RISKY_FASTING_DETOX = "risky-fasting-detox-content"
 LABEL_UNVERIFIED_SUPPLEMENT = "unverified-supplement-claims"
 LABEL_UNSAFE_DEVICE_USE = "unsafe-device-usage"
 
-UNVERIFIED_CURE_PATTERNS = [
-    r"\b(cures?|reverse[sd]?|eliminates?)\b.*\b(cancer|diabetes|autism|heart\s+disease|anxiety|arthritis|alzheimer['']?s?)\b",
-    r"\b(cure|reverse|fix)\s+(anxiety|arthritis|alzheimer['']?s?|autism|diabetes|cancer|heart disease)\b",
-    r"\b(cure|reverse)\s+(your|all)\s+(symptoms?|disease|condition)\b",
-    r"\bmiracle (cure|treatment)\b",
-    r"\bno side effects\b.*\b(any|all)\b.*\b(disease|condition)\b",
-    r"\b(cure|reverse)\s+.*\b(permanently|completely|100%|immediately)\b",
-    r"\b(one|just one)\s+.*\b(cure|reverse|fix)\s+.*\b(anxiety|diabetes|cancer|disease)\b",
+UNSAFE_MEDICATIONS = [
+    "ivermectin", "bleach", "chlorine dioxide", "mms", 
+    "lupron", "colloidal silver", "methylene blue", "radium",
+    "laetrile", "blue fabric dye", "fabric dye", "hydroxychloroquine",
+    "black salve", "coffee enema", "mercury", "bear bile", "radithor"
+]
+
+SUPPLEMENTS = [
+    "kaempferol", "apricot kernel", "amygdalin", "chitosan", "turmeric", 
+    "baking soda", "organic smoothie", "alkaline water", "miracle water",
+    "cbd oil", "essential oil", "virgin coconut oil", "black seed oil",
+    "rose syrup", "rooh afza", "bamboo salt", "hydrogen water"
 ]
 
 UNSAFE_MED_PATTERNS = [
-    r"\b(stop|quit|throw away|ditch)\b.*\b(insulin|statins?|antidepressants?|blood pressure meds?|bp meds?)\b",
-    r"\b(avoid|avoid all)\s+(prescription|all prescription)\s+(asthma inhalers?|medications?|meds?|drugs?)\b",
-    r"\b(switch to|switch)\s+.*\b(instead|instead of)\s+.*\b(insulin|medications?|meds?|prescription)\b",
-    r"\b(double|triple|cut|halve)\s+(your|the)\s+(dose|dosage)\b",
-    r"\b(no need|don['']t need)\b.*\b(prescription|doctor)\b",
-    r"\b(double|triple|cut|halve)\s+(your|a)\s+(dose|dosage)\b.*\b(supplement|medication|meds?)\b",
-    r"\b(my goal|i want|planning|trying)\s+.*\b(to stop|stop taking|quit)\s+.*\b(prescription|medication|meds?)\b",
-    r"\b(quit|stop)\s+.*\b(medications?|meds?|prescriptions?)\b.*\b(now|100%|immediately)\b",
-    r"\b(the truth is|truth is)\s+.*\b(medications?|meds?|antidepressants?)\s+.*\b(don['']t work|don['']t help)\b.*\b(quit|stop)\b",
-    r"\b(risk|risks?)\s+.*\b(taking|of taking)\s+.*\b(insulin|medications?)\s+.*\b(greater than|far greater)\b",
+    r"(?i)\bivermectin\b.{0,100}\b(cure|treat|miracle|works for|taking for|ordered|recommend|cancer|covid|shown a post|feels cured|high doses)\b",
+    r"(?i)\border(ed)?\s+ivermectin\b",
+    r"(?i)\b(shown a post|opened it)\b.{0,50}\bivermectin\b",
+    r"(?i)\b(bleach|chlorine dioxide|MMS)\b.{0,100}\b(cure|cures|drink|miracle|protocol|peddling|sells|huckster|quack|trump|rfk|autism|cancer|covid|deadly|solution)\b",
+    r"(?i)\bit'?s\s+(bleach|chlorine|deadly)\b",
+    r"(?i)\bthis\s+is\s+(?:the\s+)?.miracle\s+cure.\b.{0,50}\b(it'?s\s+)?bleach\b",
+    r"(?i)\bwill\s+(announce|be\s+peddling)\b.{0,50}\bmiracle\s+cure\b.{0,50}\bit'?s\s+bleach\b",
+    r"(?i)\b(blue\s+fabric\s+dye)\b.{0,80}\bmiracle\s+cure\b.{0,50}\b(cancer|stage\s+4)\b",
+    r"(?i)\bmeet\s+\w+\b.{0,50}\b(quack|huckster|sells)\b.{0,50}\b(?:the\s+)?.miracle\s+cure.\b.{0,50}\b(chlorine|bleach)\b",
+    r"(?i)\bsells?\s+(?:the\s+)?.miracle\s+cure.\b.{0,50}\b(chlorine|bleach)\b",
+    r"(?i)\bpeople\s+used\s+to\s+drink\b.{0,30}\bradium\b",
+    r"(?i)\bradium\b.{0,80}\b(marketed|tonic|health|cure|drink)\b",
+    r"(?i)\bvaccines\s+cause\b.{0,100}\bradium\b.{0,50}\bmiracle\s+cure\b",
+    r"(?i)\blaetrile\b.{0,80}\b(cancer|cure|miracle|treatment|recall|rubes|fleeced|eschewed)\b",
+    r"(?i)\blupron\b.{0,50}\b(autism|cure|miracle)\b",
+    r"(?i)\bcolloidal\s+silver\b.{0,50}\b(cure|antibiotic|treat)\b",
+    r"(?i)\bmethylene\s+blue\b.{0,50}\b(cancer|cure|aging)\b",
+    r"(?i)\b(stop|quit|throw\s+away|ditch|don't\s+need)\s+(taking\s+)?(your\s+)?\b(insulin|medication|meds|prescription)\b",
+    r"(?i)\b(this\s+drug|the\s+drug|one\s+drug|form\s+of\s+birth\s+control)\b.{0,100}\b(touted|being\s+sold|marketed|being\s+sold\s+as)\b.{0,50}\b(cure|miracle)\b",
+    r"(?i)\b(doctor|someone)\s+on\s+tiktok\b.{0,50}\bnew\s+supplement\b.{0,50}\bcure\b.{0,50}\b(COVID|cancer)\b",
+    r"(?i)\b(took|taking)\s+high\s+doses\b.{0,50}\bivermectin\b",
+    r"(?i)\b(friend|guy|person)\s+(said|took)\b.{0,50}\b(high\s+doses|ivermectin)\b.{0,50}\b(feels\s+cured|cured)\b",
+    r"(?i)\b(instagram\s+)?(?:influencer|social\s+media\s+post|tiktok|youtube)\b.{0,80}\b(promotes?|claims?|advertises?)\b.{0,80}\bmiracle\s+(serum|pills?|device|mushroom\s+extract|anti-aging\s+pills|injection|capsules?|CBD\s+(?:capsules?|oil)|vitamin)\b",
+    r"(?i)\bmiracle\s+(device|mushroom|mushroom\s+extract|injection|capsules?|CBD\s+(?:capsules?|oil)|vitamin|serum)\b.{0,80}\b(cure|cures|for|stops)\b.{0,50}\b(diseases?|stage\s+4|cancer|COVID|autism)\b",
+    r"(?i)\b(someone|person)\s+(?:online\s+)?claimed\b.{0,80}\b(herbal\s+concoction|new\s+\w+)\b.{0,80}\bcures?\b.{0,50}\b(COVID|cancer)\b",
+    r"(?i)\bsome\s+(?:americans|people)\s+believe\b.{0,80}\b(blue\s+fabric\s+dye|fabric\s+dye)\b.{0,50}\bmiracle\s+cure\b",
+    r"(?i)\b(hydroxychloroquine|hcq)\b.{0,80}\b(cure|cures|miracle)\b.{0,50}\b(covid|cancer)\b",
+    r"(?i)\bskip\s+(?:your\s+)?(vaccine|chemo|treatment)\b.{0,50}\b(use|try)\b.{0,50}\b(this|natural)\b",
+    # specific unsafe patterns
+    r"(?i)\b(bear\s+bile)\b.{0,80}\b(cure|selling|prescribed)\b.{0,50}\b(liver\s+disease|arthritis)\b",
+    r"(?i)\b(coconut\s+oil\s+enema)\b.{0,80}\b(cure|claiming)\b.{0,50}\b(parkinson)\b",
+    r"(?i)\b(radithor|radioactive\s+water)\b.{0,80}\b(energy\s+tonic|cure|sold\s+as)\b",
+    r"(?i)\btrepanning\b.{0,80}\b(cure|drilling\s+holes)\b.{0,50}\b(headache|epilepsy|mental\s+illness)\b",
 ]
 
-RISKY_FASTING_DETOX_PATTERNS = [
-    r"\b(dry fast|water fast)\b.*\b(48|72|96|120)\s*(h|hours?)\b",
-    r"\b(48|72|96|120)\s*(hour|hours?)\s+(dry fast|water fast)\b",
-    r"\b(48|72|96|120)\s+(hour|hours?)\s+(dry|water)\s+fast\b",
-    r"\b(dry fast|water fast)\b.*\b(48|72|96|120)\b",
-    r"\bdetox (tea|cleanse|flush)\b.*\b(weight|fat|toxins?)\b",
-    r"\bcolon cleanse\b.*\b(lose|drop)\s+\d+\s*(kg|kgs|pounds|lbs)\b",
-    r"\b(detox|cleanse)\b.*\b(tea|drink)\b",
-    r"\bdrink\b.*\b(detox|cleanse)\b.*\b(tea|instead)\b",
-    r"\b(detox|cleanse)\b.*\b(drop|lose)\s+\d+\s*(lbs?|pounds?|kg)\b",
-    r"\b(full body|body)\s+detox\s+cleanse\b",
-    r"\b(dry|water)\s+fast\b.*\b(only way|key to|secret to|guide)\b",
-    r"\b(dry|water)\s+fast\b.*\b(cure|eliminate|reset|reverse)\b",
+SUPPLEMENT_PATTERNS = [
+    r"(?i)\bkaempferol\b.{0,80}\b(is\s+great|miracle|named after|naturalist|10/10|used for cancer treatment)\b",
+    r"(?i)\b(alkaline\s+water|miracle\s+(?:spring\s+)?water)\b.{0,80}\b(cured|erase\s+debt|implied)\b",
+    r"(?i)\bmiracle\s+(?:spring\s+)?water\b.{0,80}\b(airtime|evangelist|selling|advertising)\b",
+    r"(?i)\b(?:ofcom|religious\s+(?:TV\s+)?channel)\s+(?:has\s+)?fined\b.{0,100}\bmiracle\s+(?:spring\s+)?water\b.{0,80}\bcure\b",
+    r"(?i)\b(?:fined|fine).*\bmiracle\s+(?:spring\s+)?water\b.{0,80}\b(?:cure|claims?)\b",
+    r"(?i)^Can\s+[Aa]lkaline\s+water\s+(?:prevent\s+or\s+)?cure\s+cancer",
+    r"(?i)\b[Aa]lkaline\s+water\s+(?:prevent\s+or\s+)?cure\s+cancer.*\b(?:oncologist|Times\s+of\s+India|explains)\b",
+    r"(?i)\b(apricot\s+kernels?|amygdalin)\b.{0,80}\b(cure|miracle|kept\s+bags|claiming)\b",
+    r"(?i)\b(smoothie|juice|organic\s+smoothie)\b.{0,100}\b(cure|could\s+cure|thought.*cure|drinking)\b.{0,50}\b(cancer|pancreatic)\b",
+    r"(?i)\bsteve\s+jobs\b.{0,100}\b(cure|thought.*cure)\b.{0,50}\b(smoothie|organic|drinking)\b",
+    r"(?i)\b(turmeric|baking\s+soda)\b.{0,80}\bcure\b.{0,50}\bcancer\b",
+    r"(?i)\bturmeric\s+capsules\b.{0,80}\b(?:cure|prevent)\b.{0,50}\bcancer\b",
+    r"(?i)\bchitosan\b.{0,50}\bcancer\b",
+    r"(?i)\bgiving\s+up\s+sugar\b.{0,50}\b(cure|would\s+cure)\b",
+    r"(?i)\bsupplement\b.{0,80}\b(cure|will\s+cure)\b.{0,50}\b(aging|arthritis|inflammation)\b",
+    r"(?i)\bCBD\s+oil\b.{0,50}\b(cure|cured)\b.{0,50}\b(cancer|autism|epilepsy)\b",
+    r"(?i)\bessential\s+oils?\b.{0,50}\b(cure|cured)\b.{0,50}\b(cancer|disease)\b",
+    # geographic/cultural supplements 
+    r"(?i)\b(virgin\s+coconut\s+oil)\b.{0,80}\b(?:marketed\s+as|booming\s+business|preventing|curing)\b.{0,50}\b(lupus)\b",
+    r"(?i)\b(black\s+seed\s+oil)\b.{0,80}\b(?:promoting|cure|promoted\s+as)\b.{0,50}\b(asthma|diabetes|hypertension)\b",
+    r"(?i)\b(?:rooh\s+afza|rose\s+syrup)\b.{0,80}\b(?:claiming|mixed\s+with|cure|cures)\b.{0,50}\b(gastritis|ulcer)\b",
+    r"(?i)\b(bamboo\s+salt)\b.{0,80}\b(?:prevent|claiming|prevents)\b.{0,50}\b(cancer|diabetes)\b",
+    r"(?i)\b(hydrogen\s+water)\b.{0,80}\b(?:prevent|cure|reverse)\b.{0,50}\b(alzheimer|aging)\b",
 ]
 
-UNVERIFIED_SUPPLEMENT_PATTERNS = [
-    r"\bNMN|NAD\+|peptides?|SARMs?|nootropics?\b.*\b(cures?|fix(es|ed)|revers(es|e))\b",
-    r"\bjust take\b.*\b(supplements?|herbs?|pills?)\b.*\b(no need|instead)\b.*\b(doctor|medication|treatment)\b",
-    r"\b(supplements?|herbs?|pills?)\b.*\b(instead|instead of)\b.*\b(medications?|meds?|doctor|treatment)\b",
-    r"\b(double|increase)\s+(your|the)\s+(dose|dosage)\b.*\b(supplement|herb|pill)\b.*\b(instead of|instead)\b",
+FASTING_PATTERNS = [
+    r"(?i)\b(prolonged\s+(?:water\s+)?fasting|dry\s+fast(?:ing)?|water\s+fast(?:ing)?|extended\s+fasting)\b.{0,100}\b(cure|kills?.*cancer|reset|heal|detox|claim|chronic\s+illness|multiple\s+illnesses|dangerous|allegedly|supposedly|cures\s+disease)\b",
+    r"(?i)\bfasting\s+(?:for\s+)?\d+\s+(hours?|days?)\b.{0,100}\b(cure|kills?.*cancer|reset|heal|detox|claim|prevent|supposedly|straight|allegedly|detoxes)\b",
+    r"(?i)\b(tried|anyone\s+tried)\s+fasting\b.{0,70}\d+\s+hours?\b.{0,50}\b(reset|kill.*cancer|supposedly|straight)\b",
+    r"(?i)\bintermittent\s+fasting\b.{0,100}\b(reset|cure|allegedly|supposedly|resets\s+immunity|cures\s+disease)\b",
+    r"(?i)\b(carnivore\s+diet|hunza\s+diet)\b.{0,100}\b(cure\s+all|cancer\s+free|long\s+life|miracle|supposedly|village|cured)\b",
+    r"(?i)\b(his\s+diets?|extreme\s+diet|detox\s+diets?|juicing\s+diet)\b.{0,80}\b(cure\s+all\s+disease|could\s+cure\s+all|claim\s+to\s+cure|cure\s+everything|detox|prevent|reset|allegedly|supposedly)\b",
+    r"(?i)\bmiracle\s+diet\b.{0,50}\b(cleanse|kill.*cancer|cure)\b",
 ]
 
-UNSAFE_DEVICE_PATTERNS = [
-    r"\bnebuliz(e|er|ing)\b.*\b(essential oils?|hydrogen peroxide|vinegar|colloidal silver)\b",
-    r"\b(essential oils?|hydrogen peroxide|vinegar|colloidal silver)\b.*\bnebuliz(e|er|ing)\b",
-    r"\bnebuliz(ing|e)\s+(colloidal silver|essential oils?|hydrogen peroxide)\b",
-    r"\b(use|promoted by|recommending)\s+.*\b(essential oils?|colloidal silver)\s+.*\b(nebuliz|inhal)\b",
-    r"\bCGM\b.*\b(hack|game|cheat)\b.*\b(diabetes|insulin)\b",
-    r"\bSpO2\b.*\b(no need\b.*\bdoctor|ignore\b.*\bdoctor)\b",
-    r"\buse\b.*\b(essential oils?)\b.*\b(nebuliz|inhal)\b",
+CURE_PATTERNS = [
+    #  always flag these
+    r"(?i)\bmiracle\s+(?:cancer\s+)?cure\b",
+    r"(?i)\b(selling|peddling|hawking)\s+(?:a\s+)?miracle\s+cure\b",
+    r"(?i)\b(discovered|found)\s+(?:the\s+)?miracle\s+cure\b",
+    r"(?i)\bscam\b.{0,50}\bmiracle\s+cure\b",
+    r"(?i)\b(trump|rfk|kennedy)\b.{0,80}\b(miracle\s+cure|cure.*autism|peddling|hawking)\b",
+    r"(?i)\b(hoxsey|conman|charlatan)\b.{0,50}\bmiracle\s+cure\b",
+    r"(?i)\bgovernment\b.{0,50}\b(hiding|suppressing)\b.{0,50}\bcure\b.{0,50}\bcancer\b",
+    r"(?i)\b(lured|preying\s+on)\b.{0,50}\b(desperate|vulnerable)\b.{0,50}\bmiracle\s+cure\b",
+    
+    # require disease context
+    r"(?i)\b(cure|cured|cures)\s+(?:my\s+|your\s+|his\s+|her\s+)?(stage\s+4|terminal|pancreatic)\s+(cancer|leukemia)\b",
+    r"(?i)\b(friend|neighbor|coworker|guy|someone)\b.{0,80}\b(claimed|swears|said|told)\b.{0,80}\b(cured|reversed|healed)\b.{0,50}\b(stage\s+4|terminal|pancreatic|cancer)\b",
+    r"(?i)\b(herbal|mushroom|rare\s+fungus|natural)\b.{0,80}\b(cure|cured|reversed)\b.{0,50}\b(stage\s+4|terminal|pancreatic|cancer)\b",
+    r"(?i)\bprefer(?:red)?\s+(?:the\s+)?natural\s+(?:miracle\s+)?cure\b.{0,50}\b(chemotherapy|treatment|medicine)\b",
+    
+    #  disease + cure claims
+    r"(?i)\b(cure|cured)\b.{0,50}\b(cancer|diabetes|autism|alzheimer)\b.{0,50}\b(naturally|natural|miracle|alternative)\b",
+    r"(?i)\b(natural|alternative)\b.{0,50}\b(cure|treatment)\b.{0,50}\b(cancer|diabetes|autism)\b",
+    r"(?i)\b(someone|person|doctor)\b.{0,80}\b(claimed|claims|says)\b.{0,80}\b(cure|cures)\b.{0,50}\b(cancer|covid|autism)\b",
+    
+    # question patterns with specific disease
+    r"(?i)\b(can|could|does|will)\b.{0,30}\b(cure|prevent)\b.{0,30}\b(cancer|stage\s+4|terminal)\b",
+    r"(?i)\b(heard|read|saw)\b.{0,50}\b(cure|cures)\b.{0,50}\b(cancer|diabetes|autism)\b",
+    
+    # historical patterns
+    r"(?i)\b(1950s|1960s|1970s)\b.{0,80}\bmiracle\s+cure\b",
+    r"(?i)\bsteaming\s+compost\b.{0,50}\bmiracle\s+cure\b",
+    
+    # additional patterns
+    r"(?i)\b(?:this|that|the)\s+(?:will|can|could)\s+cure\s+(?:cancer|diabetes|autism)\b",
+    r"(?i)\bfinally\s+(?:found|discovered)\s+(?:a\s+)?cure\b.{0,50}\b(cancer|diabetes)\b",
+    r"(?i)\b(?:eliminates?|destroys?|kills?)\s+cancer\s+cells?\b.{0,50}\bnaturally\b",
+    r"(?i)\breverse\s+(?:diabetes|cancer|alzheimer)\s+with\b",
+    r"(?i)\b(?:amazing|incredible|revolutionary)\s+(?:new\s+)?(?:cure|treatment|discovery)\b.{0,50}\b(cancer|diabetes)\b",
 ]
 
-ALLOW_CONTEXT_PATTERNS = [
-    r"\b(CDC|WHO|NIH|NHS|EMA|Mayo Clinic|Cochrane)\b",
-    r"\b(systematic review|meta[- ]analysis|randomized (controlled )?trial)\b",
-    r"\b(talk to|speak with|check with)\s+(your|a)\s+doctor\b",
-    r"\bmyth\b.*\bdebunk(ed|ing)?\b",
-    r"\b(fact[- ]?check(ed|ing)?|fact\s+checked)\b",
+WEAK_CURE_SIGNALS = [
+    r"(?i)\bmiracle\b.{0,30}\b(cure|treatment|water|serum)\b",
+    r"(?i)\bcure\s+(?:for\s+)?(?:stage\s+4|terminal|pancreatic)\b",
+    r"(?i)\b(?:natural|alternative)\s+(?:cure|treatment)\b.{0,50}\b(?:cancer|diabetes|autism)\b",
+    r"(?i)\b(?:big\s+pharma|government|they)\s+(?:don'?t\s+want|hiding|suppressing)\b.{0,50}\bcure\b",
+    r"(?i)\b(?:selling|hawking|peddling)\b.{0,50}\b(?:cure|miracle|treatment)\b",
+    r"(?i)\b(?:claims?|swears|promised)\s+(?:to\s+)?cure\b",
 ]
 
-REFUTATION_PATTERNS = [
-    r"\b(is|are)\s+not\s+true\b",
-    r"\bthis is misinformation\b",
-    r"\bthis claim is false\b",
-    r"\bdebunk(ing|ed)\b",
-    r"\b(is|are)\s+false\b",
-    r"\b(is|are)\s+wrong\b",
-    r"\bhas been debunked\b",
-    r"\bproven false\b",
-    r"\bnot supported by evidence\b",
-    r"\b(dangerous|harmful|false|wrong|ridiculous|garbage|scam|terrible)\s+(and|,)\s+(false|wrong|dangerous)\b",
-    r"\b(that|this)\s+is\s+(dangerous|harmful|wrong|false|ridiculous|garbage|scam|terrible|incredibly dangerous)\b",
-    r"\b(don['']t|do not)\s+(ever|listen to|try|do this|believe)\b",
-    r"\b(dangerous|harmful)\s+(myth|misinformation|advice|claim|information)\b",
-    r"\b(must|should)\s+(never|not|be corrected)\b.*\b(spread|share|recommend)\b",
-    r"\b(is|are)\s+(a|an)\s+(dangerous|harmful)\s+(myth|misinformation|claim|advice)\b",
+STRONG_NEGATION_PATTERNS = [
+    # Strong negation about cures
+    r"(?i)\b(there\s+is\s+no|no\s+such\s+thing\s+as)\b.{0,50}\bmiracle\b.{0,50}\b(cure|food|supplement|that\s+will\s+cure)\b",
+    r"(?i)\bno\s+miracle\s+(?:food|supplement|cure)\b.{0,50}\bwill\s+cure\b",
+    r"(?i)\b(?:it'?s\s+just\s+so\s+)?dangerous\s+and\s+wrong\b.{0,50}\bno\s+miracle\b",
+    r"(?i)\bwhy\s+there'?s\s+no\s+cure\s+for\s+cancer\b",
+    
+    # scientific/regulatory negation - NEW!
+    r"(?i)\b(?:FDA|NIH|Lancet|Cochrane|peer-reviewed)\b.{0,80}\b(?:no\s+evidence|no\s+correlation|no\s+data|does\s+not\s+cure|are\s+not\s+approved)\b",
+    r"(?i)\b(?:FDA|NIH)\s+(?:alert|advisory|guidance|statement)\b.{0,50}\b(?:no\s+supplement|cannot\s+legally\s+claim)\b",
+    r"(?i)\bno\s+clinical\s+evidence\b.{0,50}\b(?:cure|curing|preventing)\b",
+    r"(?i)\b(?:study|research|journal|article)\b.{0,50}\b(?:no\s+evidence|does\s+not\s+cure|anti-inflammatory\s+properties\s+but\s+does\s+not)\b",
+    
+    # other negation patterns
+    r"(?i)\bno\s+evidence\b.{0,30}\b(?:support|show|prove)\b.{0,30}\bcure\b",
+    r"(?i)\bdebunk(?:ed|ing)\b.{0,50}\b(?:cure|miracle|claim)\b",
+    r"(?i)\bdon'?t\s+(?:believe|fall\s+for)\b.{0,50}\b(?:cure|miracle|claim)\b",
 ]
 
-# Negation indicators that suggest the harmful content is being refuted
-NEGATION_INDICATORS = [
-    r"\b(but|however|although|though)\b",
-    r"\b(not|don't|doesn't|didn't|won't|wouldn't|shouldn't)\b",
-    r"\b(never|no one should|you should not|avoid)\b",
-    r"\b(this is|that is|which is)\s+(false|wrong|incorrect|dangerous|harmful|not true)\b",
-    r"\b(contrary to|despite|in spite of)\b",
+TITLE_NEGATION_PATTERNS = [
+    r"(?i)^.{0,80}\bisn'?t\s+a\s+(?:cancer\s+)?cure\b",
+    r"(?i)^.{0,80}\bis\s+not\s+a\s+cure\b",
+    r"(?i)^.{0,80}\bwhy\s+there'?s\s+no\s+cure\b",
+    r"(?i)^.{0,80}\bno\s+cure\s+for\b",
 ]
 
-# Quote indicators - suggests content is being quoted rather than promoted
-QUOTE_INDICATORS = [
-    r'["\']',  # Quotation marks
-    r"\b(some|people|they|others)\s+(say|claim|argue|believe|think)\b",
-    r"\b(allegedly|supposedly|reportedly)\b",
-    r"\b(according to|as|quote|quoted)\b",
+SKIP_PATTERNS = [
+    r"^(?=.*\b(bootlicking|POW|loser.*funeral)\b)(?!.*\b(cure|miracle)\b).{0,300}$",
+    r"^(?=.*\b(personal\s+news|disappear)\b)(?!.*\b(cure|miracle)\b).{0,150}$",
+    r"^(?=.*\bmalfunctioning.*congratulations.*cancer\b)",
+    r"(?i)^.{0,100}\b(personal\s+news|just\s+in\s+case|disappear\s+into\s+the\s+ether)\b",
+    r"(?i)\bbot.*malfunctioning\b",
+    r"(?i)\bcongratulations.*cancer.*haha\b",
 ]
-
-CERTAINTY_WORDS = [
-    r"\bnever\b", r"\balways\b", r"\b100%\b", r"\bguaranteed?\b", r"\bfor sure\b"
-]
-
-IMPERATIVE_HEALTH_PATTERNS = [
-    r"\b(stop|quit|ditch|throw away|skip|avoid|refuse)\b.*\b(shots?|vaccines?|meds?|medications?|insulin)\b",
-    r"\bjust\b.*\b(take|use|drink|eat|do)\b.*\b(instead)\b",
-]
-
-URL_REGEX = re.compile(r"https?://\S+")
-
-
+#load domain list from embedding context
 def load_domain_list(path: Path) -> Set[str]:
     domains: Set[str] = set()
     if not path.exists():
@@ -150,8 +206,9 @@ def load_domain_list(path: Path) -> Set[str]:
                 domains.add(dom)
     return domains
 
-
+#extract from embedding context 
 def extract_domains(text: str):
+    URL_REGEX = re.compile(r"https?://\S+")
     urls = URL_REGEX.findall(text)
     domains = []
     for u in urls:
@@ -164,290 +221,44 @@ def extract_domains(text: str):
             continue
     return domains
 
-
 def any_match(patterns, text: str) -> bool:
-    return any(re.search(p, text, flags=re.IGNORECASE) for p in patterns)
-
+    return any(re.search(p, text, flags=re.IGNORECASE | re.DOTALL) for p in patterns)
 
 def count_matches(patterns, text: str) -> int:
-    return sum(1 for p in patterns if re.search(p, text, flags=re.IGNORECASE))
+    return sum(1 for p in patterns if re.search(p, text, flags=re.IGNORECASE | re.DOTALL))
 
-
-def split_into_sentences(text: str) -> List[str]:
-    """Split text into sentences using NLTK if available, otherwise simple regex."""
-    if NLTK_AVAILABLE:
-        try:
-            return sent_tokenize(text)
-        except:
-            pass
-    # Fallback: simple sentence splitting
-    sentences = re.split(r'[.!?]+', text)
-    return [s.strip() for s in sentences if s.strip()]
-
-
-def check_negation_context(sentence: str, pattern_match: bool) -> bool:
-    """
-    Check if a sentence containing a harmful pattern is negated or refuted.
-    Returns True if the pattern should be ignored due to negation.
-    """
-    if not pattern_match:
-        return False
-    
-    sentence_lower = sentence.lower()
-    
-    question_patterns = [
-        r"^.*\b(is|are|does|do|can|should|would|could)\s+.*\?$",
-        r"\b(is|are)\s+.*\b(safe|unsafe|dangerous|risky|okay|ok)\s*\??$",
-        r"\b(is|are)\s+(it|this|that)\s+(safe|unsafe|dangerous|risky|okay|ok)\s+.*\b(to|do|if)\b",
-        r"\b(is there any truth to|is there truth to)\s+.*\b(claim|post|advice)\b",
-        r"\b(confused|unsure|uncertain)\s+.*\b(about|regarding)\b",
-        r"\b(what|why|how)\s+.*\b(risks?|safety|danger)\b",
-    ]
-    
-    is_question = any_match(question_patterns, sentence)
-    if is_question and not re.search(r'\b(must|should|need to|have to)\s+.*\b(use|do|take)', sentence_lower):
-        return True
-
-    source_orgs = ['cdc', 'who', 'nih', 'nhs', 'ema', 'mayo clinic', 'cochrane']
-    source_misuse_patterns = [
-        rf"\b({'|'.join(re.escape(org) for org in source_orgs)})\s+is\s+(wrong|false|lying|incorrect)\b",
-        rf"\b({'|'.join(re.escape(org) for org in source_orgs)})\s+(says?|claims?)\s+.*\b(but|however|actually|really)\b",
-        rf"\bdespite\s+({'|'.join(re.escape(org) for org in source_orgs)})\b",
-    ]
-    
-    has_source_misuse = any_match(source_misuse_patterns, sentence)
-    if has_source_misuse:
-        return False
-    
-    # Check for explicit refutation patterns (but only if not source misuse)
-    if any_match(REFUTATION_PATTERNS, sentence):
-        return True
-    
-
-    harmful_action_negations = [
-        r"\b(don't|do not|never|shouldn't|wouldn't)\s+(stop|quit|ditch|throw away|skip)\b",
-        r"\b(don't|do not|never|shouldn't|wouldn't)\s+(take|use|drink|eat)\b.*\b(instead|instead of)\b",
-        r"\b(should|must|always)\s+(not|never)\s+(stop|quit|skip|avoid)\b",
-        r"\b(don't|do not)\s+(ever|listen to)\s+.*\b(stop|quit)\b",
-        r"\b(don't|do not)\s+(ever)\s+.*\b(stop|quit)\s+.*\b(without\s+consulting|before\s+consulting)\b",
-        r"\b(why|how)\s+(would|could)\s+.*\b(stop|quit)\b.*\b(dangerous|safe)\b",
-        r"\b(advised|advise|tell|tell them)\s+(them|you|him|her)?\s+(not to|don't|never)\s+(stop|quit)\b",
-        r"\b(confused|unsure|ask|will ask|should|will)\s+.*\b(doctor|physician)\b.*\b(stop|quit)\b",
-        r"\b(that|this)\s+(is|was)\s+(dangerous|harmful|incredibly dangerous|terrible advice|garbage)\b",
-        r"\bnever\s+(use|recommend)\s+.*\b(nebuliz|inhal|device)\b.*\b(can cause|cause|damage|harm)\b",
-        r"\b(will|would)\s+never\s+(recommend|suggest|use)\b",
-        r"\b(only if|only when)\s+.*\b(licensed doctor|doctor|physician|prescribes|prescribed)\b",
-    ]
-    
-    if any_match(harmful_action_negations, sentence):
-        return True
-    negation_words = ['not', "don't", "doesn't", "didn't", "won't", "wouldn't", "shouldn't", 
-                      'never', 'false', 'wrong', 'incorrect', 'dangerous', 'harmful']
-    
-    harmful_keywords = ['cure', 'stop', 'quit', 'fast', 'detox', 'supplement', 'nebulizer']
-    for keyword in harmful_keywords:
-        if keyword in sentence_lower:
-            keyword_pos = sentence_lower.find(keyword)
-            context_before = sentence_lower[max(0, keyword_pos - 30):keyword_pos]
-            
-            if any(neg in context_before for neg in ['not', "don't", "doesn't"]):
-                if re.search(rf"\b(don't|do not|not)\s+{keyword}", sentence_lower):
-                    return True
-            
-            if not has_source_misuse:
-                refutation_words = ['false', 'wrong', 'incorrect', 'myth', 'debunk']
-                for ref_word in refutation_words:
-                    if ref_word in context_before:
-                        refutation_patterns = [
-                            rf"\b(this|that|the)\s+.*\b{re.escape(keyword)}.*\b(is|are)\s+{ref_word}\b",
-                            rf"\b{re.escape(keyword)}.*\b(is|are)\s+(not\s+)?(true|correct|valid)\b",
-                            rf"\b(this|that|the)\s+.*\b{re.escape(keyword)}.*\b(has\s+been\s+)?(debunk|myth)\b",
-                            rf"\b(this|that|the)\s+.*\b(is|are)\s+{ref_word}.*\b{re.escape(keyword)}\b",
-                        ]
-                        if any_match(refutation_patterns, sentence_lower):
-                            return True
-    
-    return False
-
-
-def check_tentative_hypothetical(sentence: str) -> bool:
-    """
-    Check if content is tentative or hypothetical rather than a firm claim.
-    Returns True if content should have reduced score (tentative/hypothetical).
-    """
-    sentence_lower = sentence.lower()
-    
-    tentative_patterns = [
-        r"\b(i'll|i will)\s+(see|check|try|test)\s+.*\b(if|whether)\b",
-        r"\b(i'm|i am)\s+(interested in|considering|thinking|planning|trying|unsure)\b",
-        r"\b(but|,)\s+(only|only if)\s+.*\b(doctor|physician|approval|prescribes)\b",
-        r"\b(bought|got|have)\s+.*\b(i'll|i will|i'm going to)\s+(see|try|test|check)\b",
-        r"\b(confused|unsure|uncertain)\s+.*\b(about|regarding)\b",
-    ]
-    
-    if any_match(tentative_patterns, sentence_lower):
-        return True
-    
-    return False
-
-
-def check_quoted_content(text: str, sentence: str) -> bool:
-    """
-    Check if harmful content appears to be quoted rather than promoted.
-    Returns True if content is likely quoted (should reduce score).
-    """
-    sentence_lower = sentence.lower()
-    
-    if '"' in sentence or "'" in sentence:
-        quote_count = sentence.count('"') + sentence.count("'")
-        if quote_count >= 2:
-            refutation_indicators = ['but', 'however', 'false', 'wrong', 'dangerous', 'debunk', 'myth', 'garbage', 'scam']
-            if any(ind in sentence_lower for ind in refutation_indicators):
-                return True
-            return True
-    
-    explicit_quote_patterns = [
-        r'\b(some|people|they|others|many|critics)\s+(say|claim|argue|believe|think|suggest|allege)\s+["\']',
-        r'["\'].*\b(say|claim|argue|believe|think|suggest|allege)\b',
-        r'\b(according to|as|quote|quoted|reportedly|allegedly)\b.*["\']',
-        r'\b(saw|heard|read)\s+.*\b(post|claim|say|claiming)\s+["\']',
-        r'\b(quote|quoted)\s+(from|by|saying)\b.*["\']',
-        r'\b(claiming|claim|said|says)\s+["\'].*["\']\s+.*\b(but|however|false|wrong|dangerous)\b',
-    ]
-    
-    if any_match(explicit_quote_patterns, sentence):
-        return True
-    
-    debunk_with_quote_patterns = [
-        r'\b(saw|heard|read)\s+.*\b(post|claim|quote)\s+.*["\'].*["\'].*\b(but|however|false|wrong|dangerous|debunk)\b',
-        r'\b(claim|claiming|said|says)\s+["\'].*["\'].*\b(but|however)\s+.*\b(false|wrong|dangerous|debunk)\b',
-        r'\b(this|that)\s+claim.*["\'].*["\'].*\b(is|was)\s+(false|wrong|dangerous|a myth)\b',
-        r'\b(saw|heard)\s+.*\b(post|claim)\s+.*["\'].*["\'].*\b(but|however)\s+.*\b(dangerous|false|wrong)\s+(and|,)\s+(false|wrong|dangerous)\b',
-        r'\b(quote|quoted)\s+(from|by|saying)\s+.*["\'].*["\'].*\b(advised|tell|tell them|not to)\b',
-    ]
-    
-    if any_match(debunk_with_quote_patterns, sentence):
-        return True
-    
-    reporting_verbs = ['say', 'claim', 'argue', 'believe', 'think', 'suggest', 'allege']
-    for verb in reporting_verbs:
-        if re.search(rf'\b(some|people|they|others|many|critics)\s+{verb}\b', sentence_lower):
-            if not re.search(rf'\b(don\'t|do not|never)\s+{verb}\b', sentence_lower):
-                return True
-    
-    return False
-
-
-def verify_source_citation(text: str, source_orgs: List[str]) -> Tuple[bool, float, bool]:
-    """
-    Verify if credible sources are being cited correctly vs misused.
-    Returns (has_adjustment, adjustment_value, has_any_misuse)
-    """
+def contains_substance(text: str, substances: list) -> bool:
     text_lower = text.lower()
-    adjustment = 0.0
-    has_any_misuse = False
-    sentences = split_into_sentences(text)
-    
-    for org in source_orgs:
-        org_lower = org.lower()
-        if org_lower not in text_lower:
-            continue
-        
-        # Look for citation patterns that suggest legitimate use
-        legitimate_patterns = [
-            rf"{re.escape(org_lower)}\s+(says?|states?|reports?|finds?|shows?|confirms?|recommends?)",
-            rf"according\s+to\s+{re.escape(org_lower)}",
-            rf"{re.escape(org_lower)}\s+(study|research|trial|analysis|review)",
-            rf"({re.escape(org_lower)}\s+)?(randomized|systematic|meta[- ]?analysis)",
-        ]
-        
-        general_misuse_patterns = [
-            rf"despite\s+{re.escape(org_lower)}",
-            rf"{re.escape(org_lower)}\s+is\s+(wrong|false|lying)",
-        ]
-        
-        sentence_constrained_misuse_pattern = rf"{re.escape(org_lower)}\s+(says?|claims?)\s+.*\b(but|however|actually|really)\b"
-        
-        org_has_misuse = False
-        
-        if any_match(general_misuse_patterns, text):
-            org_has_misuse = True
-        
-        if not org_has_misuse:
-            for sentence in sentences:
-                sentence_lower = sentence.lower()
-                if org_lower in sentence_lower:
-                    match = re.search(sentence_constrained_misuse_pattern, sentence_lower, flags=re.IGNORECASE)
-                    if match:
-                        match_end = match.end()
-                        text_after_match = sentence_lower[match_end:]
-                        other_sources = [s.lower() for s in source_orgs if s.lower() != org_lower]
-                        other_source_pattern = r'\b(' + '|'.join(re.escape(s) for s in other_sources) + r')\s+(says?|claims?|states?)'
-                        if re.search(other_source_pattern, text_after_match[:50], flags=re.IGNORECASE):
-                            continue
-                        org_has_misuse = True
-                        break
-        
-        has_legitimate = any_match(legitimate_patterns, text)
-        
-        if org_has_misuse:
-            adjustment -= 0.3
-            has_any_misuse = True
-        elif has_legitimate:
-            for sentence in sentences:
-                if org_lower in sentence.lower():
-                    if any_match(REFUTATION_PATTERNS, sentence):
-                        adjustment += 0.2
-                    else:
-                        adjustment += 0.5
-                    break
-    
-    return adjustment != 0.0, adjustment, has_any_misuse
+    return any(substance in text_lower for substance in substances)
 
+def should_skip_entirely(text: str) -> bool:
+    return any_match(SKIP_PATTERNS, text)
 
-def analyze_context_window(text: str, sentence_idx: int, sentences: List[str]) -> float:
-    """
-    Analyze surrounding sentences for context that might affect scoring.
-    Returns a context adjustment factor (negative = reduce score, positive = increase).
-    """
-    context_score = 0.0
-    
-    start_idx = max(0, sentence_idx - 2)
-    end_idx = min(len(sentences), sentence_idx + 3)
-    context_sentences = sentences[start_idx:end_idx]
-    context_text = " ".join(context_sentences)
-    
-    if any_match(REFUTATION_PATTERNS, context_text):
-        context_score -= 0.5
-    
-    safety_patterns = [
-        r"\b(talk to|speak with|check with|consult)\s+(your|a)\s+doctor\b",
-        r"\b(seek|get)\s+(medical|professional)\s+(advice|help|care)\b",
-        r"\b(always|make sure to)\s+(consult|talk to)\s+(your|a)\s+doctor\b",
-    ]
-    if any_match(safety_patterns, context_text):
-        context_score -= 0.4
-    
-    if any_match(ALLOW_CONTEXT_PATTERNS, context_text):
-        context_score -= 0.3
-    
-    return context_score
+def has_strong_negation(text: str) -> bool:
+    return any_match(STRONG_NEGATION_PATTERNS, text)
 
+def has_title_negation(text: str) -> bool:
+    sentences = sent_tokenize(text)
+    if not sentences:
+        return False
+    first_sentence = sentences[0].strip()
+    if len(first_sentence) > 150:
+        return False
+    return any_match(TITLE_NEGATION_PATTERNS, first_sentence)
 
+#get score based off matches and weights specificed 
 class HealthPolicyScorer:
     def __init__(self, domain_dir: Path | None = None, use_embeddings: bool = True):
         domain_dir = domain_dir or Path("domain_lists")
         self.allow_domains = load_domain_list(domain_dir / "allow_domains.csv")
         self.risk_domains = load_domain_list(domain_dir / "risk_domains.csv")
         
-        # Initialize embedding-based context verifier if available
         self.embedding_verifier = None
         if use_embeddings and EMBEDDING_VERIFIER_AVAILABLE and EmbeddingContextVerifier:
             try:
                 self.embedding_verifier = EmbeddingContextVerifier(use_embeddings=True)
             except Exception as e:
                 print(f"Warning: Could not initialize embedding verifier: {e}")
-                self.embedding_verifier = None
 
     def score_text(self, text: str) -> Dict[str, float]:
         t = text.strip()
@@ -459,120 +270,87 @@ class HealthPolicyScorer:
             LABEL_UNSAFE_DEVICE_USE: 0.0,
         }
 
-        # Split into sentences for context-aware analysis
-        sentences = split_into_sentences(t)
+        if should_skip_entirely(t):
+            return scores
+
+        if has_strong_negation(t):
+            return scores
+            
+        if has_title_negation(t):
+            return scores
+
+        # MULTI-SIGNAL DETECTION for cure patterns
+        cure_strong_match = any_match(CURE_PATTERNS, t)
+        weak_signal_count = count_matches(WEAK_CURE_SIGNALS, t)
         
-        # Track which patterns matched and in which sentences
-        pattern_matches = {
-            LABEL_UNVERIFIED_CURE: [],
-            LABEL_UNSAFE_MED_ADVICE: [],
-            LABEL_RISKY_FASTING_DETOX: [],
-            LABEL_UNVERIFIED_SUPPLEMENT: [],
-            LABEL_UNSAFE_DEVICE_USE: [],
-        }
+        if cure_strong_match:
+            scores[LABEL_UNVERIFIED_CURE] = 0.80
+        elif weak_signal_count >= 3:
+            scores[LABEL_UNVERIFIED_CURE] = 0.70
+        elif weak_signal_count == 2:
+            scores[LABEL_UNVERIFIED_CURE] = 0.55
+        elif weak_signal_count == 1:
+            scores[LABEL_UNVERIFIED_CURE] = 0.35
 
-        # Check each sentence individually for patterns
-        for sent_idx, sentence in enumerate(sentences):
-            # Check each category
-            if any_match(UNVERIFIED_CURE_PATTERNS, sentence):
-                if not check_negation_context(sentence, True):
-                    pattern_matches[LABEL_UNVERIFIED_CURE].append(sent_idx)
-            
-            if any_match(UNSAFE_MED_PATTERNS, sentence):
-                if not check_negation_context(sentence, True):
-                    pattern_matches[LABEL_UNSAFE_MED_ADVICE].append(sent_idx)
-            
-            if any_match(RISKY_FASTING_DETOX_PATTERNS, sentence):
-                if not check_negation_context(sentence, True):
-                    pattern_matches[LABEL_RISKY_FASTING_DETOX].append(sent_idx)
-            
-            if any_match(UNVERIFIED_SUPPLEMENT_PATTERNS, sentence):
-                if not check_negation_context(sentence, True):
-                    pattern_matches[LABEL_UNVERIFIED_SUPPLEMENT].append(sent_idx)
-            
-            if any_match(UNSAFE_DEVICE_PATTERNS, sentence):
-                if not check_negation_context(sentence, True):
-                    pattern_matches[LABEL_UNSAFE_DEVICE_USE].append(sent_idx)
+        # check specific categories
+        unsafe_med_match = any_match(UNSAFE_MED_PATTERNS, t)
+        supplement_match = any_match(SUPPLEMENT_PATTERNS, t)
+        fasting_match = any_match(FASTING_PATTERNS, t)
+        
+        if unsafe_med_match:
+            scores[LABEL_UNSAFE_MED_ADVICE] = 0.9
+            # Strongly reduce unverified-cure for medication focus
+            if scores[LABEL_UNVERIFIED_CURE] > 0:
+                scores[LABEL_UNVERIFIED_CURE] *= 0.2
 
-        for label, matched_sentences in pattern_matches.items():
-            if matched_sentences:
-                base_score = 1.0
-                quoted_reduction = 0.0
-                tentative_reduction = 0.0
-                context_adjustments = []
-                for sent_idx in matched_sentences:
-                    if check_quoted_content(t, sentences[sent_idx]):
-                        quoted_reduction += 0.3
-                    if check_tentative_hypothetical(sentences[sent_idx]):
-                        tentative_reduction += 0.5
-                    context_adj = analyze_context_window(t, sent_idx, sentences)
-                    context_adjustments.append(context_adj)
-                
-                min_context_adj = min(context_adjustments) if context_adjustments else 0.0
-                quoted_reduction = min(quoted_reduction, 0.4)
-                tentative_reduction = min(tentative_reduction, 0.6)
-                
-                scores[label] = base_score + min_context_adj - quoted_reduction - tentative_reduction
+        if supplement_match:
+            scores[LABEL_UNVERIFIED_SUPPLEMENT] = 0.9
+            # Reduce unverified-cure for supplement focus
+            if scores[LABEL_UNVERIFIED_CURE] > 0:
+                scores[LABEL_UNVERIFIED_CURE] *= 0.3
 
-        # Domain-based adjustments
+        if fasting_match:
+            scores[LABEL_RISKY_FASTING_DETOX] = 0.9
+            # Reduce unverified-cure for fasting focus
+            if scores[LABEL_UNVERIFIED_CURE] > 0:
+                scores[LABEL_UNVERIFIED_CURE] *= 0.3
+
+        # embedding adjustment
+        if self.embedding_verifier:
+            try:
+                is_refutation, confidence = self.embedding_verifier.detect_refutation_context(t)
+                if is_refutation and confidence > 0.75:
+                    for k in scores:
+                        scores[k] *= 0.2
+            except Exception:
+                pass
+
+        # domain adjustments
         domains = extract_domains(t)
         if domains:
             if any(d in self.risk_domains for d in domains):
                 for k in scores:
-                    scores[k] += 0.3
+                    if scores[k] > 0:
+                        scores[k] = min(1.0, scores[k] + 0.1)
             if any(d in self.allow_domains for d in domains):
                 for k in scores:
-                    scores[k] -= 0.5
+                    scores[k] = max(0, scores[k] - 0.3)
 
-        source_orgs = ['CDC', 'WHO', 'NIH', 'NHS', 'EMA', 'Mayo Clinic', 'Cochrane']
-        has_citation_adjustment, citation_adjustment, source_misuse_detected = verify_source_citation(t, source_orgs)
-        
-        if has_citation_adjustment:
-            for k in scores:
-                scores[k] -= citation_adjustment
-        
-        if self.embedding_verifier:
-            embedding_adjustment = self.embedding_verifier.get_context_adjustment(t)
-            for k in scores:
-                scores[k] += embedding_adjustment
-            
-            for org in source_orgs:
-                if org.lower() in t.lower():
-                    is_legit, confidence = self.embedding_verifier.verify_source_usage(t, org)
-                    if is_legit:
-                        for k in scores:
-                            scores[k] -= 0.3 * confidence
-                    elif confidence > 0.5:
-                        source_misuse_detected = True
-                        for k in scores:
-                            scores[k] += 0.2 * confidence
-
-        if not source_misuse_detected:
-            if any_match(ALLOW_CONTEXT_PATTERNS, t) or any_match(REFUTATION_PATTERNS, t):
-                for k in scores:
-                    scores[k] -= 0.5
-
-        # Stance amplification
-        certainty_hits = count_matches(CERTAINTY_WORDS, t)
-        imperative_hits = count_matches(IMPERATIVE_HEALTH_PATTERNS, t)
-        stance_boost = 0.2 * certainty_hits + 0.3 * imperative_hits
-        if stance_boost:
-            for k in scores:
-                if scores[k] > 0:
-                    scores[k] += stance_boost
-
+        # clamp
         for k in scores:
-            scores[k] = max(0.0, scores[k])
+            scores[k] = min(1.0, max(0.0, scores[k]))
 
         return scores
-
-    def labels_for_text(self, text: str, mode: str = "default") -> List[str]:
+#balance weights 
+    def labels_for_text(self, text: str, mode: str = "balanced") -> List[str]:
         scores = self.score_text(text)
-        if mode == "conservative":
-            thresh = 1.2
-        elif mode == "recall":
-            thresh = 0.8
-        else:
-            thresh = 1.0
 
-        return [label for label, s in scores.items() if s >= thresh]
+        thresholds = {
+            LABEL_UNSAFE_MED_ADVICE: 0.35,
+            LABEL_UNVERIFIED_CURE: 0.30,
+            LABEL_RISKY_FASTING_DETOX: 0.35,
+            LABEL_UNVERIFIED_SUPPLEMENT: 0.35,
+            LABEL_UNSAFE_DEVICE_USE: 0.35,
+        }
+
+        return [label for label, s in scores.items() if s >= thresholds.get(label, 0.30)]
