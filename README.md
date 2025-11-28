@@ -1,7 +1,7 @@
 # Health Misinformation Detection Labeler for Bluesky
 
 ## Group Information
-**Group Members:** Shrey Verma, Akash Basu (ab3334), Fiona Chen
+**Group Members:** Shrey Verma(sv528), Akash Basu (ab3334), Fiona Chen
 
 ## File Descriptions
 
