@@ -165,7 +165,6 @@ print(scores)
 #   'potential-unsafe-medication-advice': 0.90,
 #   'risky-fasting-detox-content': 0.0,
 #   'unverified-supplement-claims': 0.0,
-#   'unsafe-device-usage': 0.0
 # }
 ```
 
@@ -356,7 +355,6 @@ The system uses **category-specific thresholds**:
 | potential-unverified-cure | 0.30 |
 | risky-fasting-detox-content | 0.35 |
 | unverified-supplement-claims | 0.35 |
-| unsafe-device-usage | 0.35 |
 
 Labels are applied if: `score >= threshold`
 
