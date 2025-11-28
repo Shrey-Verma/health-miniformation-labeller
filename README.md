@@ -322,6 +322,16 @@ Final labels: ['potential-unsafe-medication-advice']
 - `"See cdc.gov for vaccine information"` → -0.3 adjustment
 - `"Read on sketchy-health-site.com about stopping meds"` → +0.1 adjustment
 
+#### Source Citation Verification
+
+**Purpose**: Verify if credible sources (CDC, WHO, NIH, etc.) are cited correctly or misused
+
+**How it works**:
+- Detects mentions of credible organizations: CDC, WHO, NIH, NHS, EMA, Mayo Clinic, Cochrane
+- Checks for legitimate citation patterns: "CDC study", "WHO guidelines", "randomized trial"
+- Detects misuse patterns: "CDC is wrong", "despite WHO", "CDC says X but..."
+
+
 #### Embedding-Based Verification (Optional)
 
 If `sentence-transformers` is installed, semantic similarity detection provides additional refinements:
