@@ -3,8 +3,8 @@ import time
 import random
 from atproto import Client, models
 
-bluesky_handle = 'redinjapanese.bsky.social'
-bluesky_password = 'ztfds9vu' 
+bluesky_handle = '.bsky.social'
+bluesky_password = '' 
 output_filename = 'live.csv'
 
 # search queries and their associated categories
